@@ -12,8 +12,9 @@ HexapodRobot for STC15
 	为了获得更快的运算效率，控制板使用的是22.1184MHz晶振。
 
 #### PCB 3D预览图
-![image](https://github.com/ClimbSnail/HexapodRobot_STC15/Robot_PCB_STC15W4K48S4_3D.jpg)
-![image](https://github.com/ClimbSnail/HexapodRobot_STC15/Robot_PCB_STC15W4K48S43D.jpg)
+![image](https://github.com/ClimbSnail/HexapodRobot_STC15/blob/master/Robot_PCB_STC15W4K48S4_3D.jpg)
+
+![image](https://github.com/ClimbSnail/HexapodRobot_STC15/blob/master/Robot_PCB_STC15W4K48S43D.jpg)
 
 #### 引脚定义:
 
