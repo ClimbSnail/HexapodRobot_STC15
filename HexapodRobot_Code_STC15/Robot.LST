@@ -1,0 +1,192 @@
+C51 COMPILER V9.54   ROBOT                                                                 07/15/2018 10:24:59 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE ROBOT
+OBJECT MODULE PLACED IN Robot.OBJ
+COMPILER INVOKED BY: D:\MDK\C51\BIN\C51.EXE Robot.c LARGE OPTIMIZE(8,SPEED) BROWSE MODP2 DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /***************************************************************
+   2          本六足机器人程序使用的是STC15W4K48S4单片机(与本单片机结构相同的
+   3          均可以使用)默认22.1184MHz的晶振。程序稳定产生21路PWM(均为模拟PWM)
+   4          产生的动作应与舵机的初始安装状态有关
+   5          ***************************************************************/
+   6          
+   7          //P0对应PWM0~7 P2对应PWM9~16 P1^0和P1^1分别对应PWM8 PWM17
+   8          //使用串口1进行连接串口蓝牙设备
+   9          //使用P1.6与P1.7进行AD采集
+  10          
+  11          #include "stc15w.h"
+  12          #include "config.h"
+  13          #include "timer.h"
+  14          #include "uart.h"
+  15          #include "action.h"
+  16          #include "delay.h"
+  17          #include "MPU6050.h"
+  18          #include "oled.h"
+  19          #include "pwm.h"
+  20          #include "XFS5152V2.h"
+  21          #include "ActionArr.h"
+  22          
+  23          /************************************************************************
+  24          函数名称：  IOInit(void) 初始化IO口
+  25          功能描述： 设置各个IO口输出模式为:传统模式 准双向口
+  26          入口参数： none
+  27          返 回 值： none
+  28          其他说明： 不初始化会输出不了PWM，P30 P31如果清零 串口将不能用
+  29          **************************************************************************/
+  30          void IOInit(void)
+  31          {
+  32   1          //不设置会输出不了PWM
+  33   1          P0M0 = 0x00;
+  34   1          P0M1 = 0x00;
+  35   1          P1M0 = 0x00;
+  36   1          P1M1 = 0x00;
+  37   1          P2M0 = 0x00;
+  38   1          P2M1 = 0x00;
+  39   1          P3M0 = 0x00;
+  40   1          P3M1 = 0x00;
+  41   1          P4M0 = 0x00;
+  42   1          P4M1 = 0x00;
+  43   1          P5M0 = 0x00;
+  44   1          P5M1 = 0x00;
+  45   1          P6M0 = 0x00;
+  46   1          P6M1 = 0x00;
+  47   1          P7M0 = 0x00;
+  48   1          P7M1 = 0x00;
+  49   1      
+  50   1          //以下最好清零
+  51   1          P0 = 0x00;
+  52   1          P1 = 0x00;
+  53   1          P2 = 0x00;
+  54   1          P3 = 0x03;  //P30 P31如果清零 串口将不能用
+  55   1          P4 = 0x00;
+C51 COMPILER V9.54   ROBOT                                                                 07/15/2018 10:24:59 PAGE 2   
+
+  56   1          P5 = 0x00;
+  57   1      }
+  58          
+  59          
+  60          /************************************************************************
+  61          函数名称：  ExecuteOrder(unsigned char order)
+  62          功能描述： 计算每次pwm更新需要多大的增量(用于减速控制)
+  63          入口参数： order命令代号
+  64          返 回 值： none
+  65          其他说明： 执行动画指令 order范围0x00~0x40 总共能容纳65条指令(0x0D因为接受帧
+  66                    处理的问题,暂时不能用)
+  67          **************************************************************************/
+  68          void ExecuteOrder(unsigned char order)
+  69          {
+  70   1          //在此补充指令执行代码
+  71   1      }
+*** WARNING C280 IN LINE 68 OF Robot.c: 'order': unreferenced local variable
+  72          
+  73          /************************************************************************
+  74          函数名称：  CheckAndDealY( void )
+  75          功能描述： 检查并处理语音指令
+  76          入口参数： none
+  77          返 回 值： none
+  78          其他说明： 开头‘YS’为语音设置指令 开头‘YT’为语音转发指令
+  79          **************************************************************************/
+  80          char CheckAndDealY( void )
+  81          {
+  82   1          if( usart1ReceiveSuccess2 )//如果语音缓冲区表明接收到完成指令帧
+  83   1          {
+  84   2              if( USART1_RX_BUF2[0] == 'Y' )//语音命令帧头标志
+  85   2                  if( USART1_RX_BUF2[1] == 'S' )
+  86   2                      YSOrder( USART1_RX_BUF2[2] );//语音设置命令
+  87   2                  else if( USART1_RX_BUF2[1] == 'T' ) //语音转发
+  88   2                      XFS_FrameInfo( &USART1_RX_BUF2[2] );
+  89   2      
+  90   2              usart1ReceiveSuccess2 = 0;//标志位清零
+  91   2              return 1;
+  92   2          }
+  93   1          else
+  94   1              return 0;
+  95   1      }
+  96          
+  97          
+  98          /************************************************************************
+  99          函数名称：  CheckAndDealActionDebug( void )
+ 100          功能描述： 检查并处理动作及调试指令
+ 101          入口参数： none
+ 102          返 回 值： none
+ 103          其他说明： 开头‘D’为Debug模式 其余为动作指令
+ 104          **************************************************************************/
+ 105          char CheckAndDealActionDebug( void )
+ 106          {
+ 107   1          if( usart1ReceiveSuccess )//是否已接收完整帧
+ 108   1          {
+ 109   2              if( USART1_RX_BUF[0] == 'D' )//数组调试模式帧头标志
+ 110   2                  ReceiveDataConvertToPwmValue();//数组调试模式 一次调试执行1个动作
+ 111   2      
+ 112   2              while( USART1_RX_BUF[0] && USART1_RX_BUF[0] < 0x41 )//添加循环的目的是只要发送一次指令就可以不停执
+             -行一个动作 直到下一条指令
+ 113   2                  ExecuteOrder(USART1_RX_BUF[0]);//执行动作指令 需要接收到停止命令的时候，当前动作才可以被打断
+ 114   2      
+ 115   2              usart1ReceiveSuccess = 0;//标志位清零
+C51 COMPILER V9.54   ROBOT                                                                 07/15/2018 10:24:59 PAGE 3   
+
+ 116   2              return 1;
+ 117   2          }
+ 118   1          else
+ 119   1              return 0;
+ 120   1      }
+ 121          
+ 122          
+ 123          
+ 124          void main()
+ 125          {
+ 126   1          uchar x = 9;
+ 127   1          IOInit();//初始化IO口 必须
+ 128   1          
+ 129   1          BEEP = 1;
+ 130   1          Uart1Init();//串口1初始化(默认115200) 波特率的值和系统晶振频率可以在config.h中设置
+ 131   1          Uart2Init();//串口2初始化(默认115200) 波特率的值和系统晶振频率可以在config.h中设置
+ 132   1      //    while(1){
+ 133   1      //    Uart1SendString("串口1成功发送!\r\n");//串口1发送数据
+ 134   1      //    Delay200ms();
+ 135   1      //    }
+ 136   1      
+ 137   1          Timer0Init_Mode12T();//定时器0初始化  控制pwm生成通道0
+ 138   1          Timer1Init_Mode12T();//定时器1初始化  控制pwm生成通道1
+ 139   1          Timer3Init_Mode12T();//定时器3初始化  控制pwm生成通道2
+ 140   1          Timer4Init_Mode12T();//定时器4初始化 控制舵机转速
+ 141   1      
+ 142   1          LED = 1;
+ 143   1          while(1);
+ 144   1          //以下代码测试用
+ 145   1          while(1)
+ 146   1          {
+ 147   2            PwmChange(x,1000);//改变R2的pwm为2000
+ 148   2            UpDataTimingLeft();//更新剩余低电平时间
+ 149   2            Delay1000ms();
+ 150   2            PwmChange(x,2000);//改变R2的pwm为2000
+ 151   2            UpDataTimingLeft();//更新剩余低电平时间
+ 152   2            Delay1000ms();
+ 153   2          }
+ 154   1          
+ 155   1          DoAction( forWordArr, 22 );//执行前进动作数组  66为forWordArr数组的长度
+ 156   1          while( 1 )
+ 157   1          {
+ 158   2              CheckAndDealActionDebug( );//检查并处理动作及调试指令
+ 159   2              CheckAndDealY( );//检查并处理语音指令
+ 160   2          }
+ 161   1      }
+ 162          
+*** WARNING C294 IN LINE 155 OF Robot.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    183    ----
+   CONSTANT SIZE    =    132    ----
+   XDATA SIZE       =     14       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

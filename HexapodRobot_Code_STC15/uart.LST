@@ -1,0 +1,382 @@
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN uart.OBJ
+COMPILER INVOKED BY: D:\MDK\C51\BIN\C51.EXE uart.c LARGE OPTIMIZE(8,SPEED) BROWSE MODP2 DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "uart.h"
+   2          #include "action.h"
+   3          
+   4          uchar message1; //´®¿Ú1µÄÏûÏ¢
+   5          uchar message2; //´®¿Ú2µÄÏûÏ¢
+   6          uchar receiveFlag1 = 0;//½ÓÊÕ±êÖ¾
+   7          
+   8          uchar busy1;  //´®¿Ú1Ã¦±êÖ¾
+   9          uchar busy2;  //´®¿Ú2Ã¦±êÖ¾
+  10          
+  11          //½âÎöÖ¸ÁîËùÓÃµ½µÄÊý¾Ý
+  12          /**********************************************************************************/
+  13          //×Ô¶¨ÒåµÄµÚÒ»×éUSART1_RX_BUF»º³åÇø ÓÃÓÚ»º´æ¶¯×÷Ö¸ÁîµÄÊý¾Ý 
+  14          uchar  USART1_RX_BUF[USART1_REC_LEN]; //½ÓÊÕ»º³å,×î´óUSART1_REC_LEN¸ö×Ö½Ú.Ä©×Ö½ÚÎª»»ÐÐ·û 
+  15          uchar USART1_RX_STA = 0;            //½ÓÊÕ×´Ì¬±ê¼Ç  
+  16          uchar usart1ReceiveSuccess = 0;//Ò»Ö¡Êý¾Ý½ÓÊÕÍê³É±êÖ¾Î» Ê¹ÓÃºóÒªÖÃ0
+  17          
+  18          //×Ô¶¨ÒåµÄµÚ¶þ×éUSART1_RX_BUF2»º³åÇø ÓÃÓÚ²Ù×÷²¥·ÅÓïÒôµÄÊý¾Ý   
+  19          uchar  USART1_RX_BUF2[USART1_REC_LEN2]; //½ÓÊÕ»º³å,×î´óUSART1_REC_LEN2¸ö×Ö½Ú.Ä©×Ö½ÚÎª»»ÐÐ·û 
+  20          uchar USART1_RX_STA2 = 0;             //½ÓÊÕ×´Ì¬±ê¼Ç  
+  21          uchar usart1ReceiveSuccess2 = 0;//Ò»Ö¡Êý¾Ý½ÓÊÕÍê³É±êÖ¾Î» Ê¹ÓÃºóÒªÖÃ0 
+  22          
+  23          uchar firstdata = 0;//µÚÒ»»Ø½ÓÊÕµ½µÄÖµ
+  24          /**********************************************************************************/
+  25          
+  26          
+  27          /************************************************************************
+  28          º¯ÊýÃû³Æ£º  AnalysisCom(void)    ´®¿ÚÊý¾Ý»º³å
+  29          ¹¦ÄÜÃèÊö£º ½ÓÊÕÊý¾Ý  ´æÔÚ»º³åÇøUSART1_RX_BUF»òUSART1_RX_BUF2ÖÐ
+  30          Èë¿Ú²ÎÊý£º none
+  31          ·µ »Ø Öµ£º none
+  32          ÆäËûËµÃ÷£º Êý¾ÝÖ¡ÒÔ0x0A 0x0D½áÎ²£¨\r\n£©
+  33          **************************************************************************/
+  34          void AnalysisCom(void)
+  35          {
+  36   1          if( USART1_RX_STA == 0 )
+  37   1          {
+  38   2              firstdata = message1;
+  39   2              USART1_RX_BUF[USART1_RX_STA++] = message1;
+  40   2          }
+  41   1          else if( USART1_RX_STA2 == 0 )
+  42   1          {
+  43   2              firstdata = message1;
+  44   2              USART1_RX_BUF2[USART1_RX_STA2++] = message1;
+  45   2          }
+  46   1          else
+  47   1          {
+  48   2              if( firstdata == 'Y' )
+  49   2              {
+  50   3                  if((USART1_RX_STA2&0x80)==0)//½ÓÊÕÎ´Íê³É
+  51   3                  {
+  52   4                      if(USART1_RX_STA2&0x4000)//½ÓÊÕµ½ÁË0x0d
+  53   4                      {
+  54   5                          if(message1!=0x0a)
+  55   5                              USART1_RX_STA2=0;//½ÓÊÕ´íÎó,ÖØÐÂ¿ªÊ¼
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 2   
+
+  56   5                          else
+  57   5                          {
+  58   6                              USART1_RX_STA2|=0x8000; //½ÓÊÕÍê³ÉÁË
+  59   6                              USART1_RX_STA2 = 0;//×Ô¼ºÌí¼ÓµÄ ´ïµ½Ñ­»·¸²¸ÇÐÅÏ¢µÄ×÷ÓÃ
+  60   6                              usart1ReceiveSuccess2 = 1;//½ÓÊÕÒ»Ò»Ö¡Íê³É±êÖ¾Î»
+  61   6                          }
+  62   5                      }
+  63   4                      else //»¹Ã»ÊÕµ½0X0D
+  64   4                      {
+  65   5                          if(message1==0x0d)
+  66   5                          {
+  67   6                              USART1_RX_BUF2[USART1_RX_STA2] = 0x00;
+  68   6                              USART1_RX_STA2|=0x4000;
+  69   6                          }
+  70   5                          else
+  71   5                          {
+  72   6                              USART1_RX_BUF2[USART1_RX_STA2&0X3FFF] = message1 ;
+  73   6                              USART1_RX_STA2++;
+  74   6                              if(USART1_RX_STA2>(USART1_REC_LEN2-1))
+  75   6                                  USART1_RX_STA2=0;//½ÓÊÕÊý¾Ý´íÎó,ÖØÐÂ¿ªÊ¼½ÓÊÕ
+  76   6                          }
+  77   5                      }
+  78   4                  }
+  79   3              }
+  80   2              else
+  81   2              {
+  82   3                  if((USART1_RX_STA&0x8000)==0)//½ÓÊÕÎ´Íê³É
+  83   3                  {
+  84   4                      if(USART1_RX_STA&0x4000)//½ÓÊÕµ½ÁË0x0d
+  85   4                      {
+  86   5                          if(message1!=0x0a)
+  87   5                              USART1_RX_STA=0;//½ÓÊÕ´íÎó,ÖØÐÂ¿ªÊ¼
+  88   5                          else
+  89   5                          {
+  90   6                              USART1_RX_STA|=0x8000;  //½ÓÊÕÍê³ÉÁË
+  91   6                              USART1_RX_STA = 0;//×Ô¼ºÌí¼ÓµÄ ´ïµ½Ñ­»·¸²¸ÇÐÅÏ¢µÄ×÷ÓÃ
+  92   6                              usart1ReceiveSuccess = 1;//½ÓÊÕÒ»Ò»Ö¡Íê³É±êÖ¾Î»
+  93   6                          }
+  94   5                      }
+  95   4                      else //»¹Ã»ÊÕµ½0X0D
+  96   4                      {
+  97   5                          if(message1==0x0d)USART1_RX_STA|=0x4000;
+  98   5                          else
+  99   5                          {
+ 100   6                              USART1_RX_BUF[USART1_RX_STA&0X3FFF] = message1 ;
+ 101   6                              USART1_RX_STA++;
+ 102   6                              if(USART1_RX_STA>(USART1_REC_LEN-1))
+ 103   6                                  USART1_RX_STA=0;//½ÓÊÕÊý¾Ý´íÎó,ÖØÐÂ¿ªÊ¼½ÓÊÕ
+ 104   6                          }
+ 105   5                      }
+ 106   4                  }
+ 107   3              }
+ 108   2          }
+ 109   1      
+ 110   1      }
+ 111          
+ 112          /************************************************************************
+ 113          º¯ÊýÃû³Æ£º  ReceiveDataConvertToPwmValue()  ½âÎö¶¯×÷Ö¸Áî
+ 114          ¹¦ÄÜÃèÊö£º ½âÎö¶¯×÷Ö¸Áî ½«³åÇøUSART1_RX_BUFÖÐÊý¾Ý×ªÎª¸÷Â·pwmÖµ(500-2500)
+ 115          Èë¿Ú²ÎÊý£º none
+ 116          ·µ »Ø Öµ£º none
+ 117          ÆäËûËµÃ÷£º
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 3   
+
+ 118          **************************************************************************/
+ 119          void ReceiveDataConvertToPwmValue()
+ 120          {
+ 121   1          short len = 1;//±êÊ¶´¦ÀíÊý¾ÝÊ±µÄbufferÖ¸Õë
+ 122   1          short pwm[21];//´æ·Åµ±Ç°¶¯×÷×éµÄpwmÖµ
+ 123   1          short actionNum = 0;//´æ·Å¶¯×÷×éµÄ¸öÊýÖµ
+ 124   1          short executionTime;//´æ·Åµ±Ç°¶¯×÷×éÒªÖ´ÐÐµÄÊ±¼ä
+ 125   1          char flag;
+ 126   1          char i;
+ 127   1      
+ 128   1          //½âÎö³öÖ¡Í·µÄÊý¾Ý(¶¯×÷×éµÄ¸öÊý)
+ 129   1          while( USART1_RX_BUF[len]==' ' ) len++;
+ 130   1      
+ 131   1          while( USART1_RX_BUF[len]<58 && USART1_RX_BUF[len]>47 )
+ 132   1          {
+ 133   2              actionNum = actionNum*10+USART1_RX_BUF[len++]-48;
+ 134   2          }
+ 135   1      
+ 136   1          usart1ReceiveSuccess = 0;//±êÖ¾Î»ÇåÁã
+ 137   1          //½âÎöactionNum´ÎÊý¾Ý
+ 138   1          while( actionNum-- && !usart1ReceiveSuccess )//±êÖ¾Î»ÖØÐÂ±»ÖÃÒ»µÄ»°ËµÃ÷ÓÐÐÂµÄÖ¸Áî ÐèÍ£Ö¹µ±Ç°¶¯×÷
+ 139   1          {
+ 140   2              executionTime = 0;
+ 141   2              flag = 0;
+ 142   2              for( i = 0 ; i<21 ; i++)
+ 143   2              {
+ 144   3                  pwm[i] = 0;
+ 145   3              }
+ 146   2              //½âÎö¶¯×÷Êý×éµÄÖµ
+ 147   2              while( flag<21 )
+ 148   2              {
+ 149   3                  while( USART1_RX_BUF[len++]!=' ' );
+ 150   3                  while( USART1_RX_BUF[len]<58 && USART1_RX_BUF[len]>47 )
+ 151   3                  {
+ 152   4                      pwm[flag] = pwm[flag]*10+USART1_RX_BUF[len++]-48;
+ 153   4                  }
+ 154   3                  if(  USART1_RX_BUF[len-1]<58 && USART1_RX_BUF[len-1]>47  )
+ 155   3                      flag++;
+ 156   3              }
+ 157   2              //½âÎö´Ë×é¶¯×÷×éÒªÖ´ÐÐµÄÊ±¼ä
+ 158   2              while( USART1_RX_BUF[len]==' ' ) len++;
+ 159   2              while( USART1_RX_BUF[len]<58 && USART1_RX_BUF[len]>47 )
+ 160   2              {
+ 161   3                  executionTime = executionTime*10+USART1_RX_BUF[len++]-48;
+ 162   3              }
+ 163   2      
+ 164   2              CountAddPwm(pwm,executionTime/eachFrequencyTime);//´«ÈëpwmÒÔ¼°¼õËÙ±¶ÂÊ5,¶¨Ê±Æ÷6¿ªÆôÊ±½«×Ô¶¯»ºÂýÉúÐ
+             -§
+ 165   2      //        delay_ms(executionTime);//µÈ´ý¶¯×÷½áÊø
+ 166   2          }
+ 167   1      }
+ 168          
+ 169          /*----------------------------
+ 170          UART1(´®¿Ú1) ³õÊ¼»¯º¯Êý
+ 171          -----------------------------*/
+ 172          void Uart1Init(void)
+ 173          {
+ 174   1          P3 = 0x03;  //P30 P31Èç¹ûÇåÁã ´®¿Ú½«²»ÄÜÓÃ
+ 175   1      
+ 176   1      //    ACC = P_SW1;
+ 177   1      //    ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=0
+ 178   1      //    P_SW1 = ACC;                //(P3.0/RxD, P3.1/TxD)
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 4   
+
+ 179   1      
+ 180   1      ////  ACC = P_SW1;
+ 181   1      ////  ACC &= ~(S1_S0 | S1_S1);    //S1_S0=1 S1_S1=0
+ 182   1      ////  ACC |= S1_S0;               //(P3.6/RxD_2, P3.7/TxD_2)
+ 183   1      ////  P_SW1 = ACC;
+ 184   1      ////
+ 185   1      ////  ACC = P_SW1;
+ 186   1      ////  ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=1
+ 187   1      ////  ACC |= S1_S1;               //(P1.6/RxD_3, P1.7/TxD_3)
+ 188   1      ////  P_SW1 = ACC;
+ 189   1      
+ 190   1      //#if (PARITYBIT == NONE_PARITY)
+ 191   1      //    SCON = 0x50;                //8Î»¿É±ä²¨ÌØÂÊ
+ 192   1      //#elif (PARITYBIT == ODD_PARITY) || (PARITYBIT == EVEN_PARITY) || (PARITYBIT == MARK_PARITY)
+ 193   1      //    SCON = 0xda;                //9Î»¿É±ä²¨ÌØÂÊ,Ð£ÑéÎ»³õÊ¼Îª1
+ 194   1      //#elif (PARITYBIT == SPACE_PARITY)
+ 195   1      //    SCON = 0xd2;                //9Î»¿É±ä²¨ÌØÂÊ,Ð£ÑéÎ»³õÊ¼Îª0
+ 196   1      //#endif
+ 197   1      
+ 198   1      
+ 199   1      //    AUXR |= 0x40;   //¶¨Ê±Æ÷1Ê±ÖÓÎªfosc,¼´1T
+ 200   1      //    AUXR &= 0xFE;   //´®¿Ú1Ñ¡Ôñ¶¨Ê±Æ÷1Îª²¨ÌØÂÊ·¢ÉúÆ÷
+ 201   1      //    TMOD &= 0x0F;   //Éè¶¨¶¨Ê±Æ÷1Îª16Î»×Ô¶¯ÖØ×°·½Ê½
+ 202   1      //
+ 203   1      //    TL1 = (65536 - (FOSC/4/BAUD1));   //ÉèÖÃ²¨ÌØÂÊÖØ×°Öµ
+ 204   1      //    TH1 = (65536 - (FOSC/4/BAUD1))>>8;
+ 205   1      //    ES = 1;      //Ê¹ÄÜ´®¿ÚÖÐ¶Ï
+ 206   1      //    EA = 1;     //¿ª×ÜÖÐ¶Ï
+ 207   1      //    ET1 = 0;    //½ûÖ¹¶¨Ê±Æ÷1ÖÐ¶Ï
+ 208   1      //    TR1 = 1;    //Æô¶¯¶¨Ê±Æ÷1
+ 209   1      
+ 210   1      
+ 211   1      //  ¿ÉÒÔ¼ò»¯ÎªÈçÏÂ´úÂë
+ 212   1          SCON = 0x50;    //8Î»Êý¾Ý,¿É±ä²¨ÌØÂÊ
+ 213   1          AUXR |= 0x01;   //´®¿Ú1Ñ¡Ôñ¶¨Ê±Æ÷2Îª²¨ÌØÂÊ·¢ÉúÆ÷
+ 214   1          AUXR |= 0x04;   //¶¨Ê±Æ÷2Ê±ÖÓÎªFosc,¼´1T
+ 215   1          T2L = (65536 - (FOSC/4/BAUD1));   //Éè¶¨¶¨Ê±³õÖµ
+ 216   1          T2H = (65536 - (FOSC/4/BAUD1))>>8;    //Éè¶¨¶¨Ê±³õÖµ
+ 217   1          AUXR |= 0x10;   //Æô¶¯¶¨Ê±Æ÷2
+ 218   1      }
+ 219          
+ 220          /*----------------------------
+ 221          UART2(´®¿Ú2) ³õÊ¼»¯º¯Êý
+ 222          -----------------------------*/
+ 223          void Uart2Init(void)
+ 224          {
+ 225   1          S2CON = 0x50;   //8Î»Êý¾Ý,¿É±ä²¨ÌØÂÊ
+ 226   1          AUXR |= 0x04;   //¶¨Ê±Æ÷2Ê±ÖÓÎªFosc,¼´1T
+ 227   1          T2L = (65536 - (FOSC/4/BAUD1));   //Éè¶¨¶¨Ê±³õÖµ
+ 228   1          T2H = (65536 - (FOSC/4/BAUD1))>>8;    //Éè¶¨¶¨Ê±³õÖµ
+ 229   1          AUXR |= 0x10;   //Æô¶¯¶¨Ê±Æ÷2
+ 230   1      }
+ 231          
+ 232          /*----------------------------
+ 233          UART1(´®¿Ú1) ÖÐ¶Ï·þÎñ³ÌÐò
+ 234          -----------------------------*/
+ 235          void Uart1Interrupt() interrupt 4 using 1
+ 236          {
+ 237   1          if (RI)
+ 238   1          {
+ 239   2              RI = 0;                 //Çå³ýRIÎ»
+ 240   2              receiveFlag1 = 1;     //½ÓÊÕ±êÖ¾Î»ÖÃ1
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 5   
+
+ 241   2              message1 = SBUF;          //È¡³öÐÅÏ¢
+ 242   2              AnalysisCom();
+ 243   2          }
+ 244   1          if (TI)
+ 245   1          {
+ 246   2              TI = 0;                 //Çå³ýTIÎ»
+ 247   2              busy1 = 0;               //ÇåÃ¦±êÖ¾
+ 248   2          }
+ 249   1      }
+ 250          
+ 251          
+ 252          /*----------------------------
+ 253          UART2(´®¿Ú2) ÖÐ¶Ï·þÎñº¯Êý
+ 254          -----------------------------*/
+ 255          void Uart2Interrupt() interrupt 8 using 1
+ 256          {
+ 257   1          if (S2CON & S2RI)
+ 258   1          {
+ 259   2              S2CON &= ~S2RI;         //Çå³ýS2RIÎ»
+ 260   2              message2 = S2BUF;         //È¡³öÐÅÏ¢
+ 261   2          }
+ 262   1          if (S2CON & S2TI)
+ 263   1          {
+ 264   2              S2CON &= ~S2TI;         //Çå³ýS2TIÎ»
+ 265   2              busy2 = 0;               //ÇåÃ¦±êÖ¾
+ 266   2          }
+ 267   1      }
+ 268          
+ 269          /*----------------------------
+ 270          ·¢ËÍ´®¿Ú1Êý¾Ý(ÓÐÐ£ÑéµÄ ²î´í¼ì²â)
+ 271          ----------------------------*/
+ 272          void Uart1SendData(uchar dat)
+ 273          {
+ 274   1          while (busy1);               //µÈ´ýÇ°ÃæµÄÊý¾Ý·¢ËÍÍê³É
+ 275   1          ACC = dat;                  //»ñÈ¡Ð£ÑéÎ»P (PSW.0)
+ 276   1          if (P)                      //¸ù¾ÝPÀ´ÉèÖÃÐ£ÑéÎ»
+ 277   1          {
+ 278   2      #if (PARITYBIT == ODD_PARITY)
+                      TB8 = 0;                //ÉèÖÃÐ£ÑéÎ»Îª0
+              #elif (PARITYBIT == EVEN_PARITY)
+                      TB8 = 1;                //ÉèÖÃÐ£ÑéÎ»Îª1
+              #endif
+ 283   2          }
+ 284   1          else
+ 285   1          {
+ 286   2      #if (PARITYBIT == ODD_PARITY)
+                      TB8 = 1;                //ÉèÖÃÐ£ÑéÎ»Îª1
+              #elif (PARITYBIT == EVEN_PARITY)
+                      TB8 = 0;                //ÉèÖÃÐ£ÑéÎ»Îª0
+              #endif
+ 291   2          }
+ 292   1          busy1 = 1;
+ 293   1          SBUF = ACC;                 //Ð´Êý¾Ýµ½UARTÊý¾Ý¼Ä´æÆ÷
+ 294   1      }
+ 295          
+ 296          /*----------------------------
+ 297          ·¢ËÍ´®¿Ú2Êý¾Ý(ÓÐÐ£ÑéµÄ ²î´í¼ì²â)
+ 298          ----------------------------*/
+ 299          //ÔÚÒÔÏÂ²¹³ä
+ 300          void Uart2SendData(uchar dat)
+ 301          {
+ 302   1      
+C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 6   
+
+ 303   1      }
+*** WARNING C280 IN LINE 300 OF uart.c: 'dat': unreferenced local variable
+ 304          
+ 305          /*----------------------------
+ 306          ´®¿Ú1·¢ËÍ×Ö·û´®
+ 307          ----------------------------*/
+ 308          void Uart1SendString(uchar *str)
+ 309          {
+ 310   1          while (*str)                  //¼ì²â×Ö·û´®½áÊø±êÖ¾
+ 311   1          {
+ 312   2              Uart1Send(*str++);         //·¢ËÍµ±Ç°×Ö·û
+ 313   2          }
+ 314   1      }
+ 315          
+ 316          
+ 317          /*----------------------------
+ 318          ´®¿Ú2·¢ËÍ×Ö·û´®
+ 319          ----------------------------*/
+ 320          void Uart2SendString(uchar *str)
+ 321          {
+ 322   1          while (*str)                  //¼ì²â×Ö·û´®½áÊø±êÖ¾
+ 323   1          {
+ 324   2              Uart2Send(*str++);         //·¢ËÍµ±Ç°×Ö·û
+ 325   2          }
+ 326   1      }
+ 327          
+ 328          /*----------------------------
+ 329          ´®¿Ú1·¢ËÍ×Ö·û
+ 330          ----------------------------*/
+ 331          void Uart1Send(uchar dat)
+ 332          {
+ 333   1          SBUF = dat;
+ 334   1          while(!TI);     //µÈ´ý·¢ËÍÊý¾ÝÍê³É
+ 335   1          TI=0;       //Çå³ý·¢ËÍÍê³É±êÖ¾Î»
+ 336   1      }
+ 337          
+ 338          /*----------------------------
+ 339          ´®¿Ú2·¢ËÍ×Ö·û
+ 340          ----------------------------*/
+ 341          void Uart2Send(uchar dat)
+ 342          {
+ 343   1          while(!busy2);     //µÈ´ýÇ°Ãæ·¢ËÍÊý¾ÝµÄÍê³É
+ 344   1          S2BUF = dat;      //·¢ËÍÊý¾Ý
+ 345   1          busy2 = 0;        //Çå³ýÃ¦±êÖ¾Î»
+ 346   1      }
+ 347          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1133    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    276      55
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

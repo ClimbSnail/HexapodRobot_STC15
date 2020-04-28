@@ -1,0 +1,254 @@
+C51 COMPILER V9.54   XFS5152V2                                                             07/15/2018 10:25:00 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE XFS5152V2
+OBJECT MODULE PLACED IN XFS5152V2.OBJ
+COMPILER INVOKED BY: D:\MDK\C51\BIN\C51.EXE XFS5152V2.c LARGE OPTIMIZE(8,SPEED) BROWSE MODP2 DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*****************************************************************
+   2          **  Ãû³Æ£ºYS-XFS5152ÓïÒôºÏ³ÉÅäÌ×³ÌÐò
+   3          **  ËµÃ÷£ºÓÃ»§ÔÚÊ¹ÓÃ³ÌÐòÊ±£¬Ö»ÐèÒª±àÐ´ºÃ ´®¿Ú·¢ËÍº¯ÊýPrintCom()£»¼´¿É£¬
+   4                   Ö±½Óµ÷ÓÃ±¾ÎÄ¼þ½øÐÐ²¥·Å¼´¿É£¬ÔÚ±àÐ´³ÌÐòÊ±£¬×¢ÒâÅÐ¶ÏÓïÒôºÏ³ÉÄ£
+   5                   ¿éµÄ·µ»ØÖµ£¬¸ù¾Ý·µ»ØÖµ½øÐÐÏÂÒ»´Î²¥·Å£¬Èç²»½ÓÊÕ·µ»ØÖµÔòÎÞ·¨½ø
+   6                   ÐÐÏÂÒ»´Î²¥·Å¡£
+   7          /*******************************************************************/
+   8          
+   9          #include "XFS5152V2.h"
+  10          #include "uart.h"
+  11          
+  12          /**************Ð¾Æ¬ÉèÖÃÃüÁî*********************/
+  13          code uchar XFS_StopCom[]= {0xFD,0X00,0X01,0X02}; //Í£Ö¹ºÏ³É
+  14          code uchar XFS_SuspendCom[]= {0XFD,0X00,0X01,0X03}; //ÔÝÍ£ºÏ³É
+  15          code uchar XFS_RecoverCom[]= {0XFD,0X00,0X01,0X04}; //»Ö¸´ºÏ³É
+  16          code uchar XFS_ChackCom[]= {0XFD,0X00,0X01,0X21}; //×´Ì¬²éÑ¯
+  17          code uchar XFS_PowerDownCom[]= {0XFD,0X00,0X01,0X88}; //½øÈëPOWER DOWN ×´Ì¬ÃüÁî
+  18          
+  19          /***********************************************/
+  20          
+  21          //ÉùÒô²ÎÊýÉè¶¨
+  22          code uchar YSpeed[11][6] = {"[s0]","[s1]","[s2]","[s3]","[s4]","[s5]","[s6]","[s7]","[s8]","[s9]","[s10]"}
+             -;//ÓïËÙµ÷Õû²ÎÊý
+  23          code uchar YTone[11][6] = {"[t0]","[t1]","[t2]","[t3]","[t4]","[t5]","[t6]","[t7]","[t8]","[t9]","[t10]"};
+             -//Óïµ÷µ÷Õû²ÎÊý
+  24          code uchar YVolume[11][6] = {"[v0]","[v1]","[v2]","[v3]","[v4]","[v5]","[v6]","[v7]","[v8]","[v9]","[v10]"
+             -};//ÒôÁ¿µ÷Õû²ÎÊý
+  25          code uchar YPeople[6][6] = {"[m3]","[m51]","[m52]","[m53]","[m54]","[m55]"};//·¢ÒôÈË
+  26          
+  27          static uchar YS = 5;//ÓïËÙÖ¸Õë 0-10
+  28          static uchar YT = 5;//Òôµ÷Ö¸Õë 0-10
+  29          static uchar YV = 8;//ÒôÁ¿Ö¸Õë 0-10
+  30          static uchar YP = 1;//·¢ÒôÈËÖ¸Õë 0-5
+  31          
+  32          /***********************************************************
+  33          * Ãû    ³Æ£º  Strlen
+  34          * ¹¦    ÄÜ£º  ¼ÆËã×Ö·û´®³¤¶È
+  35          * Èë¿Ú²ÎÊý£º  *DAT:ÎÄ±¾Ö¸Õë±äÁ¿
+  36          * ³ö¿Ú²ÎÊý£º    
+  37          * Ëµ    Ã÷£º
+  38          **********************************************************/
+  39          unsigned short Strlen(uchar *DAT)
+  40          {
+  41   1          unsigned short length;
+  42   1          for( length = 0; *DAT++ ; length++ );
+  43   1          return length;
+  44   1      }
+  45          
+  46          /***********************************************************
+  47          * Ãû    ³Æ£º  Strcpy
+  48          * ¹¦    ÄÜ£º  ´®¿½±´º¯Êý
+  49          * Èë¿Ú²ÎÊý£º  *info  *data:ÎÄ±¾Ö¸Õë±äÁ¿
+  50          * ³ö¿Ú²ÎÊý£º    void
+  51          * Ëµ    Ã÷£º
+  52          **********************************************************/
+C51 COMPILER V9.54   XFS5152V2                                                             07/15/2018 10:25:00 PAGE 2   
+
+  53          void Strcpy(uchar *info,uchar *dat)
+  54          {
+  55   1          while( *dat )
+  56   1          {
+  57   2              *info++ = *dat++;
+  58   2          }
+  59   1          *info = 0;
+  60   1      }
+*** WARNING C231 IN LINE 60 OF XFS5152V2.c: '_Strcpy': attempt to redefine intrinsic function
+  61          
+  62          
+  63          /***********************************************************
+  64          * Ãû    ³Æ£º  YS-XFS5152 ÎÄ±¾ºÏ³Éº¯Êý
+  65          * ¹¦    ÄÜ£º  ·¢ËÍºÏ³ÉÎÄ±¾µ½XFS5152Ð¾Æ¬½øÐÐºÏ³É²¥·Å
+  66          * Èë¿Ú²ÎÊý£º  *data:ÎÄ±¾Ö¸Õë±äÁ¿
+  67          * ³ö¿Ú²ÎÊý£º
+  68          * Ëµ    Ã÷£º ±¾º¯ÊýÖ»ÓÃÓÚÎÄ±¾ºÏ³É£¬¾ß±¸±³¾°ÒôÀÖÑ¡Ôñ¡£Ä¬ÈÏ²¨ÌØÂÊ
+  69                      Îª115200bps(ÕâÀï²»×öÏÞÖÆ)¡£ 
+  70                      Frame_Info[500]³¤¶ÈÉèÖÃÎª500  ËùÒÔ×î¶àÒ»´ÎÐÔ·¢ËÍµÄ
+  71                      ÐÅÏ¢×Ö½ÚÎª450ÒÔÄÚ¡£
+  72          * µ÷ÓÃ·½·¨£ºÀý£º SYN_FrameInfo
+  73          **********************************************************/
+  74          void XFS_FrameInfo(uchar *dat)
+  75          {
+  76   1          /****************ÐèÒª·¢ËÍµÄÎÄ±¾**********************************/
+  77   1          unsigned  char Frame_Info[500]= {1,1,1,1,1}; //¶¨ÒåµÄÎÄ±¾³¤¶È Ç°Îå¸öÒ»¶¨ÒªÉèÎª·Ç0£¬ºóÃæ´®Á¬½ÓÊ±¼ÆËã´®³
+             -¤ÒªÓÃ
+  78   1          unsigned  short length;
+  79   1          unsigned  short pos;
+  80   1          unsigned  short temp;
+  81   1      
+  82   1          //Á¬½ÓÉùÒô²ÎÊýµÄ×Ö·û
+  83   1          temp = 5;
+  84   1          Strcpy(&Frame_Info[temp],YSpeed[YS]); //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÓïËÙ
+  85   1          temp = Strlen(Frame_Info);
+  86   1          Strcpy(&Frame_Info[temp],YTone[YT]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÓïµ÷
+  87   1          temp = Strlen(Frame_Info);
+  88   1          Strcpy(&Frame_Info[temp],YVolume[YV]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÒôÁ¿
+  89   1          temp = Strlen(Frame_Info);
+  90   1          Strcpy(&Frame_Info[temp],YPeople[YP]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈë·¢ÒôÈË
+  91   1          temp = Strlen(Frame_Info);
+  92   1      
+  93   1          length = Strlen(dat);       //ÐèÒª·¢ËÍÎÄ±¾µÄ³¤¶È
+  94   1          length = length+temp-3;               //¼ÆËãÊý¾ÝÇøµÄ×Ü³¤¶È
+  95   1          /*****************Ö¡¹Ì¶¨ÅäÖÃÐÅÏ¢**************************************/
+  96   1          Frame_Info[0] = 0xFD ;      //¹¹ÔìÖ¡Í·FD
+  97   1          Frame_Info[1] = length>>8 ;   //¹¹ÔìÊý¾ÝÇø³¤¶ÈµÄ¸ß×Ö½Ú
+  98   1          Frame_Info[2] = length%256;       //¹¹ÔìÊý¾ÝÇø³¤¶ÈµÄµÍ×Ö½Ú
+  99   1          Frame_Info[3] = 0x01 ;      //¹¹ÔìÃüÁî×Ö£ººÏ³É²¥·ÅÃüÁî
+ 100   1          Frame_Info[4] = GBK;       //ÎÄ±¾±àÂë¸ñÊ½£ºGBK
+ 101   1      
+ 102   1          /*******************·¢ËÍÖ¡ÐÅÏ¢***************************************/
+ 103   1          Strcpy(&Frame_Info[temp],dat);
+ 104   1          for( pos = 0 ; pos<length+3 ; pos++ )
+ 105   1          {
+ 106   2              XFS_PutChar(Frame_Info[pos]);//ÓÃ´®¿Ú·¢ËÍ ¿ÉÔÚÅäÖÃÎÄ¼þconfigÖÐÅäÖÃXFS_PutCharºêÀ´Ö¸¶¨¶Ë¿Ú·¢ËÍ
+ 107   2          }
+ 108   1      
+ 109   1      }
+ 110          
+ 111          /***********************************************************
+ 112          * Ãû    ³Æ£º  YSOrder ÉùÒôÉèÖÃÃüÁîÖ´ÐÐº¯Êý
+C51 COMPILER V9.54   XFS5152V2                                                             07/15/2018 10:25:00 PAGE 3   
+
+ 113          * ¹¦    ÄÜ£º  ÉèÖÃÓïËÙÓïµ÷ÒôÁ¿ÒÔ¼°ÈËÉù
+ 114          * Èë¿Ú²ÎÊý£º  orderÎªÃüÁî²ÎÊý  ·¶Î§0x00-0x07
+ 115          * ³ö¿Ú²ÎÊý£º
+ 116          * Ëµ    Ã÷£º
+ 117          * µ÷ÓÃ·½·¨£ºÀý£º ±¾³ÌÐòÖÐÔÚÖ÷º¯ÊýÖÐ¼ì²âÓïÒôÉèÖÃÃüÁîµ½À´Ê±Ö´ÐÐ
+ 118          **********************************************************/
+ 119          void YSOrder(unsigned char order)//ÓïÒôÉèÖÃÃüÁî
+ 120          {
+ 121   1          unsigned  char temp[20];
+ 122   1          unsigned  char num[3];
+ 123   1          unsigned  short length;
+ 124   1          switch( order )
+ 125   1          {
+ 126   2          case 0x01:
+ 127   2              YS = (YS+1)%11;//ÓïËÙ¼Ó¿ì
+ 128   2              break;
+ 129   2          case 0x02:
+ 130   2              YS = (YS+11-1)%11;//ÓïËÙ¼õÂý
+ 131   2              break;
+ 132   2          case 0x03:
+ 133   2              YT = (YT+1)%11;//Óïµ÷ÌáÉý
+ 134   2              break;
+ 135   2          case 0x04:
+ 136   2              YT = (YT+11-1)%11;//Óïµ÷½µµÍ
+ 137   2              break;
+ 138   2          case 0x05:
+ 139   2              YV = (YV+1)%11;//ÒôÁ¿¼Ó
+ 140   2              break;
+ 141   2          case 0x06:
+ 142   2              YV = (YV+11-1)%11;//ÒôÁ¿¼õ
+ 143   2              break;
+ 144   2          case 0x07:
+ 145   2              YP = (YP+1)%6;//»»Ò»ÖÖÉùÒô
+ 146   2              XFS_FrameInfo("ÎÒÏÖÔÚµÄÉùÒôÊÇÕâÑùµÄ");
+ 147   2              break;
+ 148   2          case 0x08://»Ö¸´Ä¬ÈÏÖµ
+ 149   2              YS = 5;//ÓïËÙÖ¸Õë 0-10
+ 150   2              YT = 5;//Òôµ÷Ö¸Õë 0-10
+ 151   2              YV = 5;//ÒôÁ¿Ö¸Õë 0-10
+ 152   2              YP = 1;//·¢ÒôÈËÖ¸Õë 0-5
+ 153   2              XFS_FrameInfo("ÉùÒôÒÑ»Ö¸´Ä¬ÈÏÉèÖÃ");
+ 154   2              break;
+ 155   2          default:
+ 156   2              break;
+ 157   2          }
+ 158   1          if( order == 0x01 || order == 0x02 )
+ 159   1          {
+ 160   2              if( YS == 10 )
+ 161   2              {
+ 162   3                  num[0] = 49;
+ 163   3                  num[1] = 48;
+ 164   3                  num[2] = 0;
+ 165   3              }
+ 166   2              else
+ 167   2              {
+ 168   3                  num[0] = YS+48;
+ 169   3                  num[1] = 0;
+ 170   3              }
+ 171   2              Strcpy(temp,"ÓïËÙÒÑµ÷µ½");
+ 172   2              length = Strlen(temp);
+ 173   2              Strcpy(&temp[length],num);
+ 174   2              length = Strlen(temp);
+C51 COMPILER V9.54   XFS5152V2                                                             07/15/2018 10:25:00 PAGE 4   
+
+ 175   2              Strcpy(&temp[length],"¼¶");
+ 176   2              XFS_FrameInfo(temp);
+ 177   2          }
+ 178   1          else if( order == 0x03 || order == 0x04 )
+ 179   1          {
+ 180   2              if( YT == 10 )
+ 181   2              {
+ 182   3                  num[0] = 49;
+ 183   3                  num[1] = 48;
+ 184   3                  num[2] = 0;
+ 185   3              }
+ 186   2              else
+ 187   2              {
+ 188   3                  num[0] = YT+48;
+ 189   3                  num[1] = 0;
+ 190   3              }
+ 191   2              Strcpy(temp,"Óïµ÷ÒÑµ÷µ½");
+ 192   2              length = Strlen(temp);
+ 193   2              Strcpy(&temp[length],num);
+ 194   2              length = Strlen(temp);
+ 195   2              Strcpy(&temp[length],"¼¶");
+ 196   2              XFS_FrameInfo(temp);
+ 197   2          }
+ 198   1          else if( order == 0x05 || order == 0x06 )
+ 199   1          {
+ 200   2      
+ 201   2              if( YV == 10 )
+ 202   2              {
+ 203   3                  num[0] = 49;
+ 204   3                  num[1] = 48;
+ 205   3                  num[2] = 0;
+ 206   3              }
+ 207   2              else
+ 208   2              {
+ 209   3                  num[0] = YV+48;
+ 210   3                  num[1] = 0;
+ 211   3              }
+ 212   2              Strcpy(temp,"ÒôÁ¿ÒÑµ÷µ½");
+ 213   2              length = Strlen(temp);
+ 214   2              Strcpy(&temp[length],num);
+ 215   2              length = Strlen(temp);
+ 216   2              Strcpy(&temp[length],"¼¶");
+ 217   2              XFS_FrameInfo(temp);
+ 218   2          }
+ 219   1      }
+ 220          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    954    ----
+   CONSTANT SIZE    =    830    ----
+   XDATA SIZE       =      4     544
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

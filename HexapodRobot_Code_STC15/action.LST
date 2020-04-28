@@ -1,0 +1,138 @@
+C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE ACTION
+OBJECT MODULE PLACED IN action.OBJ
+COMPILER INVOKED BY: D:\MDK\C51\BIN\C51.EXE action.c LARGE OPTIMIZE(8,SPEED) BROWSE MODP2 DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "action.h"
+   2          #include "delay.h"
+   3          #include "pwm.h"
+   4          
+   5          //目标要到达的舵量
+   6          int targetPwm[21] = {1500,1500,1500,1500,1500,1500,1500,1500,1500,   1500,1500,1500,1500,1500,1500,1500,15
+             -00,1500,  1500,1500,1500 };
+   7          
+   8          //记录当前的舵量
+   9          int nowPwm[21] = {1500,1500,1500,1500,1500,1500,1500,1500,1500,   1500,1500,1500,1500,1500,1500,1500,1500,
+             -1500,  1500,1500,1500 };
+  10          
+  11          //每次定时中断时要增加的舵机量
+  12          int addPwm[21] = {0};
+  13          
+  14          //舵机的安装误差
+  15          /********************************************************************************************
+  16          在为调整误差值前(即errorValue值全为0)，通过串口发送Debug指令(下面有介绍)来查看当前舵机安装与理想中
+  17          位状态的差。误差值的计算：对应位上的值=1500-使舵机达到中位的值。
+  18          最后计算得到的值挨个填入errorValue数组中。
+  19          ********************************************************************************************/
+  20          int errorValue[21] = {0};
+  21          
+  22          
+  23          void UpData(void);//pwm数据更新
+  24          void CountAddPwm(int tempPwm[21],int frequency);//传入pwm以及减速倍率,定时器6开启时将自动缓慢生效
+  25          
+  26          /************************************************************************
+  27          函数名称：  CountAddPwm(uint tempPwm[21],uint frequency)
+  28          功能描述： 计算pwm每次数据更新的量 frequency为减速倍率
+  29          入口参数： tempPwm为本次目标pwm值
+  30          返 回 值： none
+  31          其他说明： 已经在定时器4中使用更新
+  32          **************************************************************************/
+  33          void CountAddPwm(int tempPwm[21],int frequency)
+  34          {
+  35   1          uchar i;
+  36   1          uchar changedI;
+  37   1          for( i = 0 ; i<21 ; i++ )
+  38   1          {
+  39   2              if( tempPwm[i]>0 )
+  40   2              {
+  41   3                  changedI = changeOrder[i];  //调换顺序的作用
+  42   3                  targetPwm[changedI] = tempPwm[i]-errorValue[i];
+  43   3                  addPwm[changedI] = (targetPwm[changedI]-nowPwm[changedI])/frequency;
+  44   3      //            targetPwm[i] = tempPwm[i];
+  45   3      //            addPwm[i] = (targetPwm[i]-nowPwm[i])/frequency;
+  46   3              }
+  47   2          }
+  48   1      }
+  49          
+  50          /************************************************************************
+  51          函数名称：  UpData(void)
+  52          功能描述： pwm数据更新
+  53          入口参数： none
+C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 2   
+
+  54          返 回 值： none
+  55          其他说明： 已经在定时器4中使用更新
+  56          **************************************************************************/
+  57          void UpData(void)
+  58          {
+  59   1          uchar pwmNumber;
+  60   1          for( pwmNumber = 0 ; pwmNumber<21 ; pwmNumber++ )
+  61   1          {
+  62   2              if( addPwm[pwmNumber]>0 )
+  63   2              {
+  64   3                  if( nowPwm[pwmNumber]<targetPwm[pwmNumber]-addPwm[pwmNumber] )
+  65   3                      nowPwm[pwmNumber] += addPwm[pwmNumber];
+  66   3                  else
+  67   3                  {
+  68   4                      nowPwm[pwmNumber] = targetPwm[pwmNumber];
+  69   4                      addPwm[pwmNumber] = 0;
+  70   4                  }
+  71   3      
+  72   3                  PwmChange( pwmNumber, nowPwm[pwmNumber] );
+  73   3              }
+  74   2              if( addPwm[pwmNumber]<0 )
+  75   2              {
+  76   3                  if( nowPwm[pwmNumber]>targetPwm[pwmNumber]-addPwm[pwmNumber] )
+  77   3                      nowPwm[pwmNumber] += addPwm[pwmNumber];
+  78   3                  else
+  79   3                  {
+  80   4                      nowPwm[pwmNumber] = targetPwm[pwmNumber];
+  81   4                      addPwm[pwmNumber] = 0;
+  82   4                  }
+  83   3                  PwmChange( pwmNumber, nowPwm[pwmNumber] );
+  84   3              }
+  85   2          }
+  86   1      //    for( pwmNumber = 0 ; pwmNumber<21 ; pwmNumber++ )
+  87   1      //            PwmChange( pwmNumber, nowPwm[pwmNumber] );
+  88   1          UpDataTimingLeft(); //更新剩余低电平时间
+  89   1      }
+  90          
+  91          /************************************************************************
+  92          函数名称：  DoAction(const uint *actionArr,uint length)
+  93          功能描述： 执行动作数组
+  94          入口参数： 指针型的actionArr length
+  95          返 回 值： none
+  96          其他说明： 该函数将传入的动作数组指针actionArr，以及actionArr的长度length(一定
+  97                      要是22的倍数 每组第25位为执行的时间间隔)有兴趣的可根据需要自行修改。
+  98          **************************************************************************/
+  99          void DoAction(const int *actionArr,int length) //执行动作数组函数
+ 100          {
+ 101   1          uint i = 0;
+ 102   1           for( i = 0 ; i<length ; i+=22 )  //不带动作中途中断功能
+ 103   1          {
+ 104   2            CountAddPwm(&actionArr[i],actionArr[i+21]/eachFrequencyTime);//50ms为定时器更新pwm的周期
+ 105   2            Delay50ms(actionArr[i+21]/eachFrequencyTime);////定时actionArr[i+22]/50个50ms 时间延缓 舵机减速控制的一
+             -部分(number最大为255)
+ 106   2          }
+ 107   1      }
+ 108          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    838    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    168      15
+C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 3   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

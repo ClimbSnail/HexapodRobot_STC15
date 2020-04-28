@@ -1,0 +1,15 @@
+"action.obj",
+"Robot.obj",
+"timer.obj",
+"uart.obj",
+"delay.obj",
+"pwm.obj",
+"XFS5152V2.obj",
+"adc.obj",
+"IIC.obj",
+"MPU6050.obj",
+"oled.obj" 
+TO "Robot" 
+RAMSIZE(256) 
+CODE( 0X0000-0XEFF8 )
+XDATA( 0X0000-0X0EFF )
