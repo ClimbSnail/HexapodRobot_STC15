@@ -7,7 +7,7 @@ HexapodRobot for STC15
 	硬件部分附有详细的原理图及其对应的PCB文件。程序部分较为精简使之可靠得运行在低速MCU上。
 
   
-	可自行去STC官网下载STC15系列的芯片手册
+	可自行去[STC官网](http://www.stcmcu.com)下载[STC15](http://www.stcmcudata.com/datasheet/stc/STC-AD-PDF/STC15.pdf)系列的芯片手册
 
 	为了获得更快的运算效率，控制板使用的是22.1184MHz晶振。
 
