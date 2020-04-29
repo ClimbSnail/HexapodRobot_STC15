@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   IIC                                                                   07/15/2018 10:25:00 PAGE 1   
+C51 COMPILER V9.54   IIC                                                                   04/30/2020 01:44:06 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE IIC
@@ -62,7 +62,7 @@ line level    source
   53          
   54          //**************************************
   55          //I2C发送应答信号
-C51 COMPILER V9.54   IIC                                                                   07/15/2018 10:25:00 PAGE 2   
+C51 COMPILER V9.54   IIC                                                                   04/30/2020 01:44:06 PAGE 2   
 
   56          //入口参数:ack (0:ACK 1:NAK)
   57          //**************************************
@@ -126,7 +126,7 @@ line level    source
  115          
  116          /*******************************************************************************
  117          * 函 数 名           : I2cReadByte()
-C51 COMPILER V9.54   IIC                                                                   07/15/2018 10:25:00 PAGE 3   
+C51 COMPILER V9.54   IIC                                                                   04/30/2020 01:44:06 PAGE 3   
 
  118          * 函数功能         : 使用I2c读取一个字节
  119          * 输    入           : 无
@@ -190,7 +190,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----       1
-C51 COMPILER V9.54   IIC                                                                   07/15/2018 10:25:00 PAGE 4   
+C51 COMPILER V9.54   IIC                                                                   04/30/2020 01:44:06 PAGE 4   
 
 END OF MODULE INFORMATION.
 

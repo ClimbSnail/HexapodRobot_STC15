@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MPU6050                                                               07/15/2018 10:25:00 PAGE 1   
+C51 COMPILER V9.54   MPU6050                                                               04/30/2020 01:44:06 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MPU6050
@@ -62,7 +62,7 @@ line level    source
   53   1        char ValueH,ValueL;
   54   1        ValueH = ReadI2C(MPU6050Address,REG_Address);//获取高八位地址
   55   1        ValueL = ReadI2C(MPU6050Address,REG_Address+1);//获取低八位数据
-C51 COMPILER V9.54   MPU6050                                                               07/15/2018 10:25:00 PAGE 2   
+C51 COMPILER V9.54   MPU6050                                                               04/30/2020 01:44:06 PAGE 2   
 
   56   1        return (ValueH<<8)+ValueL;               //返回得到的值
   57   1      }

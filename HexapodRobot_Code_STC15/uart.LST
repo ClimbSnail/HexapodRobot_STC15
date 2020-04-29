@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 1   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   53   4                      {
   54   5                          if(message1!=0x0a)
   55   5                              USART1_RX_STA2=0;//接收错误,重新开始
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 2   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 2   
 
   56   5                          else
   57   5                          {
@@ -126,7 +126,7 @@ line level    source
  115          入口参数： none
  116          返 回 值： none
  117          其他说明：
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 3   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 3   
 
  118          **************************************************************************/
  119          void ReceiveDataConvertToPwmValue()
@@ -190,7 +190,7 @@ line level    source
  176   1      //    ACC = P_SW1;
  177   1      //    ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=0
  178   1      //    P_SW1 = ACC;                //(P3.0/RxD, P3.1/TxD)
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 4   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 4   
 
  179   1      
  180   1      ////  ACC = P_SW1;
@@ -254,7 +254,7 @@ line level    source
  238   1          {
  239   2              RI = 0;                 //清除RI位
  240   2              receiveFlag1 = 1;     //接收标志位置1
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 5   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 5   
 
  241   2              message1 = SBUF;          //取出信息
  242   2              AnalysisCom();
@@ -318,7 +318,7 @@ line level    source
  300          void Uart2SendData(uchar dat)
  301          {
  302   1      
-C51 COMPILER V9.54   UART                                                                  07/15/2018 10:25:00 PAGE 6   
+C51 COMPILER V9.54   UART                                                                  04/30/2020 01:44:05 PAGE 6   
 
  303   1      }
 *** WARNING C280 IN LINE 300 OF uart.c: 'dat': unreferenced local variable

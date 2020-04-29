@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 1   
+C51 COMPILER V9.54   ACTION                                                                04/30/2020 01:44:05 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE ACTION
@@ -62,7 +62,7 @@ line level    source
   51          函数名称：  UpData(void)
   52          功能描述： pwm数据更新
   53          入口参数： none
-C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 2   
+C51 COMPILER V9.54   ACTION                                                                04/30/2020 01:44:05 PAGE 2   
 
   54          返 回 值： none
   55          其他说明： 已经在定时器4中使用更新
@@ -126,7 +126,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    838    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =    168      15
-C51 COMPILER V9.54   ACTION                                                                07/15/2018 10:24:59 PAGE 3   
+C51 COMPILER V9.54   ACTION                                                                04/30/2020 01:44:05 PAGE 3   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

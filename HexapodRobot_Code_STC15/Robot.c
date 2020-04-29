@@ -140,8 +140,9 @@ void main()
     Timer4Init_Mode12T();//定时器4初始化 控制舵机转速
 
     LED = 1;
-		while(1);
+	
 		//以下代码测试用
+		/*
 		while(1)
 		{
 			PwmChange(x,1000);//改变R2的pwm为2000
@@ -151,7 +152,7 @@ void main()
 			UpDataTimingLeft();//更新剩余低电平时间
 			Delay1000ms();
 		}
-		
+		*/
     DoAction( forWordArr, 22 );//执行前进动作数组  66为forWordArr数组的长度
     while( 1 )
     {

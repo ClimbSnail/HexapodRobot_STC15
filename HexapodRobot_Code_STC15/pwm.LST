@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   PWM                                                                   07/15/2018 10:25:00 PAGE 1   
+C51 COMPILER V9.54   PWM                                                                   04/30/2020 01:44:05 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE PWM
@@ -62,7 +62,7 @@ line level    source
   51   2              CH0_TL = timingValueL[ PwmCH0_CountFlag ];
   52   2          }
   53   1          PwmCH0_CountFlag = (PwmCH0_CountFlag+1)%9;  //ÏÂ±êÍÆ½ø
-C51 COMPILER V9.54   PWM                                                                   07/15/2018 10:25:00 PAGE 2   
+C51 COMPILER V9.54   PWM                                                                   04/30/2020 01:44:05 PAGE 2   
 
   54   1      }
   55          
@@ -126,7 +126,7 @@ line level    source
  113   1          
  114   1          //¼ÆËãÊ£ÓàµÍµçÆ½µÄÊ£ÓàÊ±¼ä
  115   1          PwmCH0_TimingLeftValue = 28672;//20ms ÐèÒª´ó¸Å36864¸ö¼ÆÊýÖµ 28672 = 65536-36864
-C51 COMPILER V9.54   PWM                                                                   07/15/2018 10:25:00 PAGE 3   
+C51 COMPILER V9.54   PWM                                                                   04/30/2020 01:44:05 PAGE 3   
 
  116   1          for( count = 0 ; count<8 ; count++ )
  117   1              PwmCH0_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //×¢Òâ'|'·ûºÅ²»Ä
