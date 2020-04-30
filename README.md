@@ -47,7 +47,7 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 	P27->L8 		P07->R8
 	P45->L9 		P46->R9
 	
-	P40->Beep   P12->ADC  (采集电量)
+	P40->Beep	P12->ADC  (采集电量)
 	P30->RxD	P31->TxD  (串口1)
 	P10->RxD2	P11->TxD2 (串口2)
 	P41->DATA (温湿度传感器)
