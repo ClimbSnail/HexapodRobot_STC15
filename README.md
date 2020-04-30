@@ -60,9 +60,9 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 1. 控制板没使用外部晶振，使用的是内部晶振。下载程序的勾选项见图示。
 2. 大体的整体系统的使用后面会追加一个视频介绍，希望大家所作的作品能有一个强大的控制系统(把单片机内存写超了就厉害了)
 3. 关于uart.c里的接收指令解析我来补(要是自己能补上也可以自行补充)
-	ReceiveDataConvertToPwmValue();
-	AnalysisCom(void);
-	CheckAndDealY( void );
+	1. ReceiveDataConvertToPwmValue();
+	2. AnalysisCom(void);
+	3. CheckAndDealY( void );
 4. 程序里的oled.h oled.c以及IIC.c IIC.h还不能用(当然还涉及到MPU6050的兼容性) 大体代码都有了，可以调试。	
 5. 以下需要你们独立补充完：
 > DHT11.h
