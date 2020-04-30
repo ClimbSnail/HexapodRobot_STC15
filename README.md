@@ -65,7 +65,7 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 	3. CheckAndDealY( void );
 4. 程序里的oled.h oled.c以及IIC.c IIC.h还不能用(当然还涉及到MPU6050的兼容性) 大体代码都有了，可以调试。	
 5. 以下需要你们独立补充完：
-> DHT11.h
-> DHT11.c
-> ADC.h
-> ADC.c
+    * DHT11.h
+    * DHT11.c
+    * ADC.h
+    * ADC.c
