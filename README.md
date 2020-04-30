@@ -5,6 +5,7 @@
 包含了硬件以及控制程序代码两个部分。
 
 硬件部分附有详细的原理图及其对应的PCB文件。程序部分较为精简使之可靠得运行在低速MCU上。
+可自行去 [STC官网](http://www.stcmcu.com) 下载 [STC15](http://www.stcmcudata.com/datasheet/stc/STC-AD-PDF/STC15.pdf) 系列的芯片手册
 
 B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 
@@ -29,9 +30,8 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 
 ### 软件篇
 	1. 代码工程为Keil 4软件的工程。
-	2. 可自行去[STC官网](http://www.stcmcu.com)下载[STC15](http://www.stcmcudata.com/datasheet/stc/STC-AD-PDF/STC15.pdf)系列的芯片手册
-	3. 使用定时器，采用分时控制的叠加算法，生成多路舵机可用的PWM信号。
-	4. 可提供精度达10us的持续PWM信号。直接驱动模拟舵机，同样适用于数字PWM舵机。
+	2. 使用定时器，采用分时控制的叠加算法，生成多路舵机可用的PWM信号。
+	3. 可提供精度达10us的持续PWM信号。直接驱动模拟舵机，同样适用于数字PWM舵机。
 
 ## 引脚定义:
 
