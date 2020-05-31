@@ -23,9 +23,9 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 
 
 ##### PCB 3D预览图
-![PCB_3D_1](https://gitee.com/ClimbSnailQ/Project_Image/raw/master/Robot_For_RaspberryPi/HexapodRobot_STC15/Robot_PCB_STC15W4K48S4_3D.jpg)
+![PCB_3D_1](https://gitee.com/ClimbSnailQ/Project_Image/raw/master/HexapodRobot_STC15/Robot_PCB_STC15W4K48S4_3D.jpg)
 
-![PCB_3D_2](https://gitee.com/ClimbSnailQ/Project_Image/raw/master/Robot_For_RaspberryPi/HexapodRobot_STC15/Robot_PCB_STC15W4K48S43D.jpg)
+![PCB_3D_2](https://gitee.com/ClimbSnailQ/Project_Image/raw/master/HexapodRobot_STC15/Robot_PCB_STC15W4K48S43D.jpg)
 
 
 ### 软件篇
