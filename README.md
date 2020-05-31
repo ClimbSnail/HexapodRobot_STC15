@@ -27,7 +27,6 @@ B站视频[链接](https://b23.tv/BV1ss411L7xp) https://b23.tv/BV1ss411L7xp
 
 ![PCB_3D_2](https://gitee.com/ClimbSnailQ/Project_Image/raw/master/HexapodRobot_STC15/Robot_PCB_STC15W4K48S43D.jpg)
 
-
 ### 软件篇
 	1. 代码工程为Keil 4软件的工程。
 	2. 使用定时器，采用分时控制的叠加算法，生成多路舵机可用的PWM信号。
