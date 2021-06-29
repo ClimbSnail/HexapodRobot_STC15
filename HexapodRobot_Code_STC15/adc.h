@@ -4,9 +4,8 @@
 #include "stc15w.h"
 #include "config.h"
 
-
-//ADCÒı½ÅÎªP1^2		ÔÚconfig.hÖĞÒÑ¾­¶¨ÒåÁËADC
-extern void ADC_init();//AD²É¼¯µÄ³õÊ¼»¯
-extern uint ADValue;//ÓÃÀ´´æAD²É¼¯ÍêµÄÊıÖµ
+//ADCå¼•è„šä¸ºP1^2		åœ¨config.hä¸­å·²ç»å®šä¹‰äº†ADC
+extern void ADC_init(); //ADé‡‡é›†çš„åˆå§‹åŒ–
+extern uint ADValue;    //ç”¨æ¥å­˜ADé‡‡é›†å®Œçš„æ•°å€¼
 
 #endif

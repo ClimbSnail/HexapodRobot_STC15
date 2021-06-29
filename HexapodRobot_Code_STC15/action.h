@@ -4,14 +4,12 @@
 #include "stc15w.h"
 #include "config.h"
 
-extern void CountAddPwm(int tempPwm[21],int frequency);//´«ÈëpwmÒÔ¼°¼õËÙ±¶ÂÊ,¶¨Ê±Æ÷6¿ªÆôÊ±½«×Ô¶¯»ºÂıÉúĞ§
-extern void DoAction(const int *actionArr,int length); //Ö´ĞĞ¶¯×÷Êı×éº¯Êı lengthÎª22µÄ±¶Êı
-extern void UpData(void);//pwmÊı¾İ¸üĞÂ
-
+extern void CountAddPwm(int tempPwm[21], int frequency); //ä¼ å…¥pwmä»¥åŠå‡é€Ÿå€ç‡,å®šæ—¶å™¨6å¼€å¯æ—¶å°†è‡ªåŠ¨ç¼“æ…¢ç”Ÿæ•ˆ
+extern void DoAction(const int *actionArr, int length);  //æ‰§è¡ŒåŠ¨ä½œæ•°ç»„å‡½æ•° lengthä¸º22çš„å€æ•°
+extern void UpData(void);                                //pwmæ•°æ®æ›´æ–°
 
 /************************************************************************
-ÒÔÏÂÎª¶¯×÷Êı×é  22¸öÎªÒ»¸öµ¥Î»(Ò»¸ö¶¯×÷)
+ä»¥ä¸‹ä¸ºåŠ¨ä½œæ•°ç»„  22ä¸ªä¸ºä¸€ä¸ªå•ä½(ä¸€ä¸ªåŠ¨ä½œ)
 **************************************************************************/
 
 #endif
-

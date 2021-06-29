@@ -4,69 +4,61 @@
 #include "stc15w.h"
 #include "config.h"
 
-
-//´®¿Ú1µÄ²¿·Ö¶¨Òå
+//ä¸²å£1çš„éƒ¨åˆ†å®šä¹‰
 /******************************************/
-#define NONE_PARITY     0       //ÎŞĞ£Ñé
-#define ODD_PARITY      1       //ÆæĞ£Ñé
-#define EVEN_PARITY     2       //Å¼Ğ£Ñé
-#define MARK_PARITY     3       //±ê¼ÇĞ£Ñé
-#define SPACE_PARITY    4       //¿Õ°×Ğ£Ñé
+#define NONE_PARITY 0  //æ— æ ¡éªŒ
+#define ODD_PARITY 1   //å¥‡æ ¡éªŒ
+#define EVEN_PARITY 2  //å¶æ ¡éªŒ
+#define MARK_PARITY 3  //æ ‡è®°æ ¡éªŒ
+#define SPACE_PARITY 4 //ç©ºç™½æ ¡éªŒ
 
-#define PARITYBIT NONE_PARITY   //¶¨ÒåĞ£ÑéÎ»
+#define PARITYBIT NONE_PARITY //å®šä¹‰æ ¡éªŒä½
 
-#define S1_S0 0x40              //P_SW1.6
-#define S1_S1 0x80              //P_SW1.7
+#define S1_S0 0x40 //P_SW1.6
+#define S1_S1 0x80 //P_SW1.7
 /******************************************/
 
-
-//´®¿Ú2µÄ²¿·Ö¶¨Òå
+//ä¸²å£2çš„éƒ¨åˆ†å®šä¹‰
 /****************************************/
-#define S2RI  0x01              //S2CON.0
-#define S2TI  0x02              //S2CON.1
-#define S2_S0 0x01              //P_SW2.0
+#define S2RI 0x01  //S2CON.0
+#define S2TI 0x02  //S2CON.1
+#define S2_S0 0x01 //P_SW2.0
 /*****************************************/
 
 typedef unsigned char BYTE;
 typedef unsigned int WORD;
 
-extern uchar receiveFlag1;  //½ÓÊÕ±êÖ¾
-extern uchar message;	 //ÏûÏ¢
-extern void Uart1Init(void);//´®¿Ú1³õÊ¼»¯ ²¨ÌØÂÊµÄÖµºÍÏµÍ³¾§ÕñÆµÂÊ¿ÉÒÔÔÚconfig.hÖĞÉèÖÃ
-extern void Uart2Init(void);//´®¿Ú2³õÊ¼»¯ ²¨ÌØÂÊµÄÖµºÍÏµÍ³¾§ÕñÆµÂÊ¿ÉÒÔÔÚconfig.hÖĞÉèÖÃ
+extern uchar receiveFlag1;   //æ¥æ”¶æ ‡å¿—
+extern uchar message;        //æ¶ˆæ¯
+extern void Uart1Init(void); //ä¸²å£1åˆå§‹åŒ– æ³¢ç‰¹ç‡çš„å€¼å’Œç³»ç»Ÿæ™¶æŒ¯é¢‘ç‡å¯ä»¥åœ¨config.hä¸­è®¾ç½®
+extern void Uart2Init(void); //ä¸²å£2åˆå§‹åŒ– æ³¢ç‰¹ç‡çš„å€¼å’Œç³»ç»Ÿæ™¶æŒ¯é¢‘ç‡å¯ä»¥åœ¨config.hä¸­è®¾ç½®
 
-extern void Uart1SendString(uchar *str); //´®¿Ú1·¢ËÍ×Ö·û´®
-extern void Uart2SendString(uchar *str); //´®¿Ú2·¢ËÍ×Ö·û´®
+extern void Uart1SendString(uchar *str); //ä¸²å£1å‘é€å­—ç¬¦ä¸²
+extern void Uart2SendString(uchar *str); //ä¸²å£2å‘é€å­—ç¬¦ä¸²
 
-extern void Uart1SendData(uchar dat);		  //´®¿Ú1·¢ËÍ×Ö·û
-extern void Uart2SendData(uchar dat);		  //´®¿Ú2·¢ËÍ×Ö·û
+extern void Uart1SendData(uchar dat); //ä¸²å£1å‘é€å­—ç¬¦
+extern void Uart2SendData(uchar dat); //ä¸²å£2å‘é€å­—ç¬¦
 
-extern void Uart1Send(uchar dat);		  //´®¿Ú1·¢ËÍ×Ö·û
-extern void Uart2Send(uchar dat);		  //´®¿Ú2·¢ËÍ×Ö·û
+extern void Uart1Send(uchar dat); //ä¸²å£1å‘é€å­—ç¬¦
+extern void Uart2Send(uchar dat); //ä¸²å£2å‘é€å­—ç¬¦
 
-
-
-//½âÎöÖ¸ÁîËùÓÃµ½µÄÊı¾İ
+//è§£ææŒ‡ä»¤æ‰€ç”¨åˆ°çš„æ•°æ®
 /**********************************************************************************/
-extern void AnalysisCom(void); 		//´®¿ÚÊı¾İ»º³å
-extern void ReceiveDataConvertToPwmValue();//½âÎö¶¯×÷Ö¸Áî
+extern void AnalysisCom(void);              //ä¸²å£æ•°æ®ç¼“å†²
+extern void ReceiveDataConvertToPwmValue(); //è§£æåŠ¨ä½œæŒ‡ä»¤
 
+#define USART1_REC_LEN 256                  //å®šä¹‰æœ€å¤§æ¥æ”¶å­—èŠ‚æ•° 256
+extern uchar USART1_RX_BUF[USART1_REC_LEN]; //æ¥æ”¶ç¼“å†²,æœ€å¤§USART1_REC_LENä¸ªå­—èŠ‚.æœ«å­—èŠ‚ä¸ºæ¢è¡Œç¬¦
+extern uchar USART1_RX_STA;                 //æ¥æ”¶çŠ¶æ€æ ‡è®°
+extern uchar usart1ReceiveSuccess;          //ä¸€å¸§æ•°æ®æ¥æ”¶å®Œæˆæ ‡å¿—ä½ ä½¿ç”¨åè¦ç½®0
 
-#define USART1_REC_LEN  			256  	//¶¨Òå×î´ó½ÓÊÕ×Ö½ÚÊı 256
-extern uchar  USART1_RX_BUF[USART1_REC_LEN]; //½ÓÊÕ»º³å,×î´óUSART1_REC_LEN¸ö×Ö½Ú.Ä©×Ö½ÚÎª»»ĞĞ·û 
-extern uchar USART1_RX_STA;         		//½ÓÊÕ×´Ì¬±ê¼Ç	
-extern uchar usart1ReceiveSuccess;//Ò»Ö¡Êı¾İ½ÓÊÕÍê³É±êÖ¾Î» Ê¹ÓÃºóÒªÖÃ0
+//è‡ªå®šä¹‰çš„ç¬¬äºŒç»„USART1_RX_BUFç¼“å†²åŒº ç”¨äºæ“ä½œæ’­æ”¾è¯­éŸ³çš„æ•°æ®
+#define USART1_REC_LEN2 10                    //å®šä¹‰æœ€å¤§æ¥æ”¶å­—èŠ‚æ•° 10
+extern uchar USART1_RX_BUF2[USART1_REC_LEN2]; //æ¥æ”¶ç¼“å†²,æœ€å¤§USART1_REC_LEN2ä¸ªå­—èŠ‚.æœ«å­—èŠ‚ä¸ºæ¢è¡Œç¬¦
+extern uchar USART1_RX_STA2;                  //æ¥æ”¶çŠ¶æ€æ ‡è®°
+extern uchar usart1ReceiveSuccess2;           //ä¸€å¸§æ•°æ®æ¥æ”¶å®Œæˆæ ‡å¿—ä½ ä½¿ç”¨åè¦ç½®0
 
-
-//×Ô¶¨ÒåµÄµÚ¶ş×éUSART1_RX_BUF»º³åÇø ÓÃÓÚ²Ù×÷²¥·ÅÓïÒôµÄÊı¾İ
-#define USART1_REC_LEN2  			10 	//¶¨Òå×î´ó½ÓÊÕ×Ö½ÚÊı 10	  	
-extern uchar  USART1_RX_BUF2[USART1_REC_LEN2]; //½ÓÊÕ»º³å,×î´óUSART1_REC_LEN2¸ö×Ö½Ú.Ä©×Ö½ÚÎª»»ĞĞ·û 
-extern uchar USART1_RX_STA2;         		//½ÓÊÕ×´Ì¬±ê¼Ç	
-extern uchar usart1ReceiveSuccess2;//Ò»Ö¡Êı¾İ½ÓÊÕÍê³É±êÖ¾Î» Ê¹ÓÃºóÒªÖÃ0 
-
-extern uchar firstdata;//µÚÒ»»Ø½ÓÊÕµ½µÄÖµ
+extern uchar firstdata; //ç¬¬ä¸€å›æ¥æ”¶åˆ°çš„å€¼
 /**********************************************************************************/
-
 
 #endif
-

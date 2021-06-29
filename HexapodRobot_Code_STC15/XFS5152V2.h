@@ -4,23 +4,20 @@
 #include "stc15w.h"
 #include "config.h"
 
-//¶¨Òå±àÂë¸ñÊ½  0x00~0x03
-#define GB2312	0x00
-#define GBK	0x01
-#define BIG5	0x02
-#define Unicode 	0x03
+//å®šä¹‰ç¼–ç æ ¼å¼  0x00~0x03
+#define GB2312 0x00
+#define GBK 0x01
+#define BIG5 0x02
+#define Unicode 0x03
 
+/**************èŠ¯ç‰‡è®¾ç½®å‘½ä»¤*********************/
+code uchar XFS_StopCom[];      //åœæ­¢åˆæˆ
+code uchar XFS_SuspendCom[];   //æš‚åœåˆæˆ
+code uchar XFS_RecoverCom[];   //æ¢å¤åˆæˆ
+code uchar XFS_ChackCom[];     //çŠ¶æ€æŸ¥è¯¢  èŠ¯ç‰‡ç©ºé—²è¿”å›0x4F
+code uchar XFS_PowerDownCom[]; //è¿›å…¥POWER DOWN çŠ¶æ€å‘½ä»¤
 
-/**************Ğ¾Æ¬ÉèÖÃÃüÁî*********************/
-code uchar XFS_StopCom[];//Í£Ö¹ºÏ³É
-code uchar XFS_SuspendCom[];//ÔİÍ£ºÏ³É
-code uchar XFS_RecoverCom[];//»Ö¸´ºÏ³É
-code uchar XFS_ChackCom[];//×´Ì¬²éÑ¯  Ğ¾Æ¬¿ÕÏĞ·µ»Ø0x4F
-code uchar XFS_PowerDownCom[];//½øÈëPOWER DOWN ×´Ì¬ÃüÁî
-
-extern void XFS_FrameInfo(uchar *dat);//ÎÄ±¾ºÏ³Éº¯Êı
-extern void YSOrder(unsigned char order);//ÓïÒôÉèÖÃÃüÁî
-
-
+extern void XFS_FrameInfo(uchar *dat);    //æ–‡æœ¬åˆæˆå‡½æ•°
+extern void YSOrder(unsigned char order); //è¯­éŸ³è®¾ç½®å‘½ä»¤
 
 #endif

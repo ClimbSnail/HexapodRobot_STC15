@@ -11,63 +11,63 @@ line level    source
    2          #include "IIC.h"
    3          
    4          //****************************************
-   5          //    MPU6050ÄÚ²¿¼Ä´æÆ÷ÉèÖÃ
+   5          //    MPU6050å†…éƒ¨å¯„å­˜å™¨è®¾ç½®
    6          //****************************************
-   7          #define SMPRT_DIV   0x19  //ÍÓÂİÒÇ²ÉÑùÂÊ£¬µäĞÍÖµ£º0x07(125Hz)
-   8          #define CONFIG        0x1A  //µÍÍ¨ÂË²¨ÆµÂÊ£¬µäĞÍÖµ£º0x06(5Hz)
-   9          #define GYRO_CONFIG   0x1B  //ÍÓÂİÒÇ×Ô¼ì¼°²âÁ¿·¶Î§£¬µäĞÍÖµ£º0x18(²»×Ô¼ì£¬2000deg/s)
-  10          #define ACCEL_CONFIG  0x1C  //¼ÓËÙ¼Æ×Ô¼ì¡¢²âÁ¿·¶Î§¼°¸ßÍ¨ÂË²¨ÆµÂÊ£¬µäĞÍÖµ£º0x01(²»×Ô¼ì£¬2G£¬5Hz)
-  11          #define ACCEL_XOUT_H  0x3B  //¼ÓËÙ¶È¼ÆXÖá¼ì²âÖµ¼Ä´æÆ÷
+   7          #define SMPRT_DIV   0x19  //é™€èºä»ªé‡‡æ ·ç‡ï¼Œå…¸å‹å€¼ï¼š0x07(125Hz)
+   8          #define CONFIG        0x1A  //ä½é€šæ»¤æ³¢é¢‘ç‡ï¼Œå…¸å‹å€¼ï¼š0x06(5Hz)
+   9          #define GYRO_CONFIG   0x1B  //é™€èºä»ªè‡ªæ£€åŠæµ‹é‡èŒƒå›´ï¼Œå…¸å‹å€¼ï¼š0x18(ä¸è‡ªæ£€ï¼Œ2000deg/s)
+  10          #define ACCEL_CONFIG  0x1C  //åŠ é€Ÿè®¡è‡ªæ£€ã€æµ‹é‡èŒƒå›´åŠé«˜é€šæ»¤æ³¢é¢‘ç‡ï¼Œå…¸å‹å€¼ï¼š0x01(ä¸è‡ªæ£€ï¼Œ2Gï¼Œ5Hz)
+  11          #define ACCEL_XOUT_H  0x3B  //åŠ é€Ÿåº¦è®¡Xè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   12          #define ACCEL_XOUT_L  0x3C
-  13          #define ACCEL_YOUT_H  0x3D  //¼ÓËÙ¶È¼ÆyÖá¼ì²âÖµ¼Ä´æÆ÷
+  13          #define ACCEL_YOUT_H  0x3D  //åŠ é€Ÿåº¦è®¡yè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   14          #define ACCEL_YOUT_L  0x3E
-  15          #define ACCEL_ZOUT_H  0x3F  //¼ÓËÙ¶È¼ÆzÖá¼ì²âÖµ¼Ä´æÆ÷
+  15          #define ACCEL_ZOUT_H  0x3F  //åŠ é€Ÿåº¦è®¡zè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   16          #define ACCEL_ZOUT_L  0x40
-  17          #define TEMP_OUT_H    0x41  //ÎÂ¶È¼ì²âÖµ¼Ä´æÆ÷
+  17          #define TEMP_OUT_H    0x41  //æ¸©åº¦æ£€æµ‹å€¼å¯„å­˜å™¨
   18          #define TEMP_OUT_L    0x42
-  19          #define GYRO_XOUT_H   0x43  //ÍÓÂİÒÇXÖá¼ì²âÖµ¼Ä´æÆ÷
+  19          #define GYRO_XOUT_H   0x43  //é™€èºä»ªXè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   20          #define GYRO_XOUT_L   0x44
-  21          #define GYRO_YOUT_H   0x45  //ÍÓÂİÒÇyÖá¼ì²âÖµ¼Ä´æÆ÷
+  21          #define GYRO_YOUT_H   0x45  //é™€èºä»ªyè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   22          #define GYRO_YOUT_L   0x46
-  23          #define GYRO_ZOUT_H   0x47  //ÍÓÂİÒÇzÖá¼ì²âÖµ¼Ä´æÆ÷
+  23          #define GYRO_ZOUT_H   0x47  //é™€èºä»ªzè½´æ£€æµ‹å€¼å¯„å­˜å™¨
   24          #define GYRO_ZOUT_L   0x48
-  25          #define PWR_MGMT_1    0x6B     //µçÔ´¹ÜÀí1¼Ä´æÆ÷
-  26          #define WHO_AM_I      0x75     //MPU6050µÄÉè±¸µØÖ·¼Ä´æÆ÷
+  25          #define PWR_MGMT_1    0x6B     //ç”µæºç®¡ç†1å¯„å­˜å™¨
+  26          #define WHO_AM_I      0x75     //MPU6050çš„è®¾å¤‡åœ°å€å¯„å­˜å™¨
   27          
-  28          #define MPU6050Address  0xD0     //Ä¬ÈÏMPU6050µÄÉè±¸µØÖ·
+  28          #define MPU6050Address  0xD0     //é»˜è®¤MPU6050çš„è®¾å¤‡åœ°å€
   29          
-  30          //¼ÓËÙ¶È¸÷·ÖÁ¿µÄÖµ
+  30          //åŠ é€Ÿåº¦å„åˆ†é‡çš„å€¼
   31          static int AccelXValue;
   32          static int AccelYValue;
   33          static int AccelZValue;
-  34          //½Ç¶È¸÷·ÖÁ¿µÄÖµ
+  34          //è§’åº¦å„åˆ†é‡çš„å€¼
   35          static int GyroXValue;
   36          static int GyroYValue;
   37          static int GyroZValue;
-  38          //ÎÂ¶ÈÖµ
+  38          //æ¸©åº¦å€¼
   39          static int TempValue;
   40          
   41          
-  42          void InitMPU6050()//MPU6050³õÊ¼»¯
+  42          void InitMPU6050()//MPU6050åˆå§‹åŒ–
   43          {
-  44   1        WriteI2C(MPU6050Address,PWR_MGMT_1, 0x00);  //½â³ıĞİÃß×´Ì¬
+  44   1        WriteI2C(MPU6050Address,PWR_MGMT_1, 0x00);  //è§£é™¤ä¼‘çœ çŠ¶æ€
   45   1        WriteI2C(MPU6050Address,SMPRT_DIV, 0x07);
   46   1        WriteI2C(MPU6050Address,CONFIG, 0x06);
   47   1        WriteI2C(MPU6050Address,GYRO_CONFIG, 0x18);
   48   1        WriteI2C(MPU6050Address,ACCEL_CONFIG, 0x01);
   49   1      }
   50          
-  51          int GetData(uchar REG_Address)//»ñÈ¡Ö¸¶¨µØÖ·ÏÂµÄÊı¾İ
+  51          int GetData(uchar REG_Address)//è·å–æŒ‡å®šåœ°å€ä¸‹çš„æ•°æ®
   52          {
   53   1        char ValueH,ValueL;
-  54   1        ValueH = ReadI2C(MPU6050Address,REG_Address);//»ñÈ¡¸ß°ËÎ»µØÖ·
-  55   1        ValueL = ReadI2C(MPU6050Address,REG_Address+1);//»ñÈ¡µÍ°ËÎ»Êı¾İ
+  54   1        ValueH = ReadI2C(MPU6050Address,REG_Address);//è·å–é«˜å…«ä½åœ°å€
+  55   1        ValueL = ReadI2C(MPU6050Address,REG_Address+1);//è·å–ä½å…«ä½æ•°æ®
 C51 COMPILER V9.54   MPU6050                                                               04/30/2020 01:44:06 PAGE 2   
 
-  56   1        return (ValueH<<8)+ValueL;               //·µ»ØµÃµ½µÄÖµ
+  56   1        return (ValueH<<8)+ValueL;               //è¿”å›å¾—åˆ°çš„å€¼
   57   1      }
   58          
-  59          void UpDataAll()    //¸üĞÂËùÓĞÊı¾İ
+  59          void UpDataAll()    //æ›´æ–°æ‰€æœ‰æ•°æ®
   60          {
   61   1        AccelXValue = GetData(ACCEL_XOUT_H);
   62   1        AccelYValue = GetData(ACCEL_YOUT_H);

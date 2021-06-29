@@ -2,67 +2,66 @@
 #include "IIC.h"
 
 //****************************************
-//		MPU6050ÄÚ²¿¼Ä´æÆ÷ÉèÖÃ
+//		MPU6050å†…éƒ¨å¯„å­˜å™¨è®¾ç½®
 //****************************************
-#define	SMPRT_DIV		0x19	//ÍÓÂİÒÇ²ÉÑùÂÊ£¬µäĞÍÖµ£º0x07(125Hz)
-#define	CONFIG				0x1A	//µÍÍ¨ÂË²¨ÆµÂÊ£¬µäĞÍÖµ£º0x06(5Hz)
-#define	GYRO_CONFIG		0x1B	//ÍÓÂİÒÇ×Ô¼ì¼°²âÁ¿·¶Î§£¬µäĞÍÖµ£º0x18(²»×Ô¼ì£¬2000deg/s)
-#define	ACCEL_CONFIG	0x1C	//¼ÓËÙ¼Æ×Ô¼ì¡¢²âÁ¿·¶Î§¼°¸ßÍ¨ÂË²¨ÆµÂÊ£¬µäĞÍÖµ£º0x01(²»×Ô¼ì£¬2G£¬5Hz)
-#define	ACCEL_XOUT_H	0x3B	//¼ÓËÙ¶È¼ÆXÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	ACCEL_XOUT_L	0x3C
-#define	ACCEL_YOUT_H	0x3D	//¼ÓËÙ¶È¼ÆyÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	ACCEL_YOUT_L	0x3E
-#define	ACCEL_ZOUT_H	0x3F	//¼ÓËÙ¶È¼ÆzÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	ACCEL_ZOUT_L	0x40
-#define	TEMP_OUT_H		0x41	//ÎÂ¶È¼ì²âÖµ¼Ä´æÆ÷
-#define	TEMP_OUT_L		0x42
-#define	GYRO_XOUT_H		0x43	//ÍÓÂİÒÇXÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	GYRO_XOUT_L		0x44
-#define	GYRO_YOUT_H		0x45	//ÍÓÂİÒÇyÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	GYRO_YOUT_L		0x46
-#define	GYRO_ZOUT_H		0x47	//ÍÓÂİÒÇzÖá¼ì²âÖµ¼Ä´æÆ÷
-#define	GYRO_ZOUT_L		0x48
-#define	PWR_MGMT_1		0x6B	   //µçÔ´¹ÜÀí1¼Ä´æÆ÷
-#define	WHO_AM_I			0x75	   //MPU6050µÄÉè±¸µØÖ·¼Ä´æÆ÷
+#define SMPRT_DIV 0x19    //é™€èºä»ªé‡‡æ ·ç‡ï¼Œå…¸å‹å€¼ï¼š0x07(125Hz)
+#define CONFIG 0x1A       //ä½é€šæ»¤æ³¢é¢‘ç‡ï¼Œå…¸å‹å€¼ï¼š0x06(5Hz)
+#define GYRO_CONFIG 0x1B  //é™€èºä»ªè‡ªæ£€åŠæµ‹é‡èŒƒå›´ï¼Œå…¸å‹å€¼ï¼š0x18(ä¸è‡ªæ£€ï¼Œ2000deg/s)
+#define ACCEL_CONFIG 0x1C //åŠ é€Ÿè®¡è‡ªæ£€ã€æµ‹é‡èŒƒå›´åŠé«˜é€šæ»¤æ³¢é¢‘ç‡ï¼Œå…¸å‹å€¼ï¼š0x01(ä¸è‡ªæ£€ï¼Œ2Gï¼Œ5Hz)
+#define ACCEL_XOUT_H 0x3B //åŠ é€Ÿåº¦è®¡Xè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define ACCEL_XOUT_L 0x3C
+#define ACCEL_YOUT_H 0x3D //åŠ é€Ÿåº¦è®¡yè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define ACCEL_YOUT_L 0x3E
+#define ACCEL_ZOUT_H 0x3F //åŠ é€Ÿåº¦è®¡zè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define ACCEL_ZOUT_L 0x40
+#define TEMP_OUT_H 0x41 //æ¸©åº¦æ£€æµ‹å€¼å¯„å­˜å™¨
+#define TEMP_OUT_L 0x42
+#define GYRO_XOUT_H 0x43 //é™€èºä»ªXè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define GYRO_XOUT_L 0x44
+#define GYRO_YOUT_H 0x45 //é™€èºä»ªyè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define GYRO_YOUT_L 0x46
+#define GYRO_ZOUT_H 0x47 //é™€èºä»ªzè½´æ£€æµ‹å€¼å¯„å­˜å™¨
+#define GYRO_ZOUT_L 0x48
+#define PWR_MGMT_1 0x6B //ç”µæºç®¡ç†1å¯„å­˜å™¨
+#define WHO_AM_I 0x75   //MPU6050çš„è®¾å¤‡åœ°å€å¯„å­˜å™¨
 
-#define	MPU6050Address	0xD0	   //Ä¬ÈÏMPU6050µÄÉè±¸µØÖ·
+#define MPU6050Address 0xD0 //é»˜è®¤MPU6050çš„è®¾å¤‡åœ°å€
 
-//¼ÓËÙ¶È¸÷·ÖÁ¿µÄÖµ
+//åŠ é€Ÿåº¦å„åˆ†é‡çš„å€¼
 static int AccelXValue;
 static int AccelYValue;
 static int AccelZValue;
-//½Ç¶È¸÷·ÖÁ¿µÄÖµ
+//è§’åº¦å„åˆ†é‡çš„å€¼
 static int GyroXValue;
 static int GyroYValue;
 static int GyroZValue;
-//ÎÂ¶ÈÖµ
+//æ¸©åº¦å€¼
 static int TempValue;
 
-
-void InitMPU6050()//MPU6050³õÊ¼»¯
+void InitMPU6050() //MPU6050åˆå§‹åŒ–
 {
-	WriteI2C(MPU6050Address,PWR_MGMT_1, 0x00);	//½â³ıĞİÃß×´Ì¬
-	WriteI2C(MPU6050Address,SMPRT_DIV, 0x07);
-	WriteI2C(MPU6050Address,CONFIG, 0x06);
-	WriteI2C(MPU6050Address,GYRO_CONFIG, 0x18);
-	WriteI2C(MPU6050Address,ACCEL_CONFIG, 0x01);
+    WriteI2C(MPU6050Address, PWR_MGMT_1, 0x00); //è§£é™¤ä¼‘çœ çŠ¶æ€
+    WriteI2C(MPU6050Address, SMPRT_DIV, 0x07);
+    WriteI2C(MPU6050Address, CONFIG, 0x06);
+    WriteI2C(MPU6050Address, GYRO_CONFIG, 0x18);
+    WriteI2C(MPU6050Address, ACCEL_CONFIG, 0x01);
 }
 
-int GetData(uchar REG_Address)//»ñÈ¡Ö¸¶¨µØÖ·ÏÂµÄÊı¾İ
+int GetData(uchar REG_Address) //è·å–æŒ‡å®šåœ°å€ä¸‹çš„æ•°æ®
 {
-	char ValueH,ValueL;
-	ValueH = ReadI2C(MPU6050Address,REG_Address);//»ñÈ¡¸ß°ËÎ»µØÖ·
-	ValueL = ReadI2C(MPU6050Address,REG_Address+1);//»ñÈ¡µÍ°ËÎ»Êı¾İ
-	return (ValueH<<8)+ValueL;               //·µ»ØµÃµ½µÄÖµ
+    char ValueH, ValueL;
+    ValueH = ReadI2C(MPU6050Address, REG_Address);     //è·å–é«˜å…«ä½åœ°å€
+    ValueL = ReadI2C(MPU6050Address, REG_Address + 1); //è·å–ä½å…«ä½æ•°æ®
+    return (ValueH << 8) + ValueL;                     //è¿”å›å¾—åˆ°çš„å€¼
 }
 
-void UpDataAll()		//¸üĞÂËùÓĞÊı¾İ
+void UpDataAll() //æ›´æ–°æ‰€æœ‰æ•°æ®
 {
-	AccelXValue = GetData(ACCEL_XOUT_H);
-	AccelYValue = GetData(ACCEL_YOUT_H);
-	AccelZValue = GetData(ACCEL_ZOUT_H);
-	
-	GyroXValue = GetData(GYRO_XOUT_H);
-	GyroYValue = GetData(GYRO_YOUT_H);
-	GyroZValue = GetData(GYRO_ZOUT_H);
-}	
+    AccelXValue = GetData(ACCEL_XOUT_H);
+    AccelYValue = GetData(ACCEL_YOUT_H);
+    AccelZValue = GetData(ACCEL_ZOUT_H);
+
+    GyroXValue = GetData(GYRO_XOUT_H);
+    GyroYValue = GetData(GYRO_YOUT_H);
+    GyroZValue = GetData(GYRO_ZOUT_H);
+}

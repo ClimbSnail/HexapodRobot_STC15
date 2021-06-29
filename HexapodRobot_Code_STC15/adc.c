@@ -3,7 +3,6 @@
 
 uint ADValue;
 
-
 void ADC_init()
 {
 }

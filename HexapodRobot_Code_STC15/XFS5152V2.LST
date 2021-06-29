@@ -8,45 +8,45 @@ COMPILER INVOKED BY: D:\MDK\C51\BIN\C51.EXE XFS5152V2.c LARGE OPTIMIZE(8,SPEED) 
 line level    source
 
    1          /*****************************************************************
-   2          **  Ãû³Æ£ºYS-XFS5152ÓïÒôºÏ³ÉÅäÌ×³ÌÐò
-   3          **  ËµÃ÷£ºÓÃ»§ÔÚÊ¹ÓÃ³ÌÐòÊ±£¬Ö»ÐèÒª±àÐ´ºÃ ´®¿Ú·¢ËÍº¯ÊýPrintCom()£»¼´¿É£¬
-   4                   Ö±½Óµ÷ÓÃ±¾ÎÄ¼þ½øÐÐ²¥·Å¼´¿É£¬ÔÚ±àÐ´³ÌÐòÊ±£¬×¢ÒâÅÐ¶ÏÓïÒôºÏ³ÉÄ£
-   5                   ¿éµÄ·µ»ØÖµ£¬¸ù¾Ý·µ»ØÖµ½øÐÐÏÂÒ»´Î²¥·Å£¬Èç²»½ÓÊÕ·µ»ØÖµÔòÎÞ·¨½ø
-   6                   ÐÐÏÂÒ»´Î²¥·Å¡£
+   2          **  åç§°ï¼šYS-XFS5152è¯­éŸ³åˆæˆé…å¥—ç¨‹åº
+   3          **  è¯´æ˜Žï¼šç”¨æˆ·åœ¨ä½¿ç”¨ç¨‹åºæ—¶ï¼Œåªéœ€è¦ç¼–å†™å¥½ ä¸²å£å‘é€å‡½æ•°PrintCom()ï¼›å³å¯ï¼Œ
+   4                   ç›´æŽ¥è°ƒç”¨æœ¬æ–‡ä»¶è¿›è¡Œæ’­æ”¾å³å¯ï¼Œåœ¨ç¼–å†™ç¨‹åºæ—¶ï¼Œæ³¨æ„åˆ¤æ–­è¯­éŸ³åˆæˆæ¨¡
+   5                   å—çš„è¿”å›žå€¼ï¼Œæ ¹æ®è¿”å›žå€¼è¿›è¡Œä¸‹ä¸€æ¬¡æ’­æ”¾ï¼Œå¦‚ä¸æŽ¥æ”¶è¿”å›žå€¼åˆ™æ— æ³•è¿›
+   6                   è¡Œä¸‹ä¸€æ¬¡æ’­æ”¾ã€‚
    7          /*******************************************************************/
    8          
    9          #include "XFS5152V2.h"
   10          #include "uart.h"
   11          
-  12          /**************Ð¾Æ¬ÉèÖÃÃüÁî*********************/
-  13          code uchar XFS_StopCom[]= {0xFD,0X00,0X01,0X02}; //Í£Ö¹ºÏ³É
-  14          code uchar XFS_SuspendCom[]= {0XFD,0X00,0X01,0X03}; //ÔÝÍ£ºÏ³É
-  15          code uchar XFS_RecoverCom[]= {0XFD,0X00,0X01,0X04}; //»Ö¸´ºÏ³É
-  16          code uchar XFS_ChackCom[]= {0XFD,0X00,0X01,0X21}; //×´Ì¬²éÑ¯
-  17          code uchar XFS_PowerDownCom[]= {0XFD,0X00,0X01,0X88}; //½øÈëPOWER DOWN ×´Ì¬ÃüÁî
+  12          /**************èŠ¯ç‰‡è®¾ç½®å‘½ä»¤*********************/
+  13          code uchar XFS_StopCom[]= {0xFD,0X00,0X01,0X02}; //åœæ­¢åˆæˆ
+  14          code uchar XFS_SuspendCom[]= {0XFD,0X00,0X01,0X03}; //æš‚åœåˆæˆ
+  15          code uchar XFS_RecoverCom[]= {0XFD,0X00,0X01,0X04}; //æ¢å¤åˆæˆ
+  16          code uchar XFS_ChackCom[]= {0XFD,0X00,0X01,0X21}; //çŠ¶æ€æŸ¥è¯¢
+  17          code uchar XFS_PowerDownCom[]= {0XFD,0X00,0X01,0X88}; //è¿›å…¥POWER DOWN çŠ¶æ€å‘½ä»¤
   18          
   19          /***********************************************/
   20          
-  21          //ÉùÒô²ÎÊýÉè¶¨
+  21          //å£°éŸ³å‚æ•°è®¾å®š
   22          code uchar YSpeed[11][6] = {"[s0]","[s1]","[s2]","[s3]","[s4]","[s5]","[s6]","[s7]","[s8]","[s9]","[s10]"}
-             -;//ÓïËÙµ÷Õû²ÎÊý
+             -;//è¯­é€Ÿè°ƒæ•´å‚æ•°
   23          code uchar YTone[11][6] = {"[t0]","[t1]","[t2]","[t3]","[t4]","[t5]","[t6]","[t7]","[t8]","[t9]","[t10]"};
-             -//Óïµ÷µ÷Õû²ÎÊý
+             -//è¯­è°ƒè°ƒæ•´å‚æ•°
   24          code uchar YVolume[11][6] = {"[v0]","[v1]","[v2]","[v3]","[v4]","[v5]","[v6]","[v7]","[v8]","[v9]","[v10]"
-             -};//ÒôÁ¿µ÷Õû²ÎÊý
-  25          code uchar YPeople[6][6] = {"[m3]","[m51]","[m52]","[m53]","[m54]","[m55]"};//·¢ÒôÈË
+             -};//éŸ³é‡è°ƒæ•´å‚æ•°
+  25          code uchar YPeople[6][6] = {"[m3]","[m51]","[m52]","[m53]","[m54]","[m55]"};//å‘éŸ³äºº
   26          
-  27          static uchar YS = 5;//ÓïËÙÖ¸Õë 0-10
-  28          static uchar YT = 5;//Òôµ÷Ö¸Õë 0-10
-  29          static uchar YV = 8;//ÒôÁ¿Ö¸Õë 0-10
-  30          static uchar YP = 1;//·¢ÒôÈËÖ¸Õë 0-5
+  27          static uchar YS = 5;//è¯­é€ŸæŒ‡é’ˆ 0-10
+  28          static uchar YT = 5;//éŸ³è°ƒæŒ‡é’ˆ 0-10
+  29          static uchar YV = 8;//éŸ³é‡æŒ‡é’ˆ 0-10
+  30          static uchar YP = 1;//å‘éŸ³äººæŒ‡é’ˆ 0-5
   31          
   32          /***********************************************************
-  33          * Ãû    ³Æ£º  Strlen
-  34          * ¹¦    ÄÜ£º  ¼ÆËã×Ö·û´®³¤¶È
-  35          * Èë¿Ú²ÎÊý£º  *DAT:ÎÄ±¾Ö¸Õë±äÁ¿
-  36          * ³ö¿Ú²ÎÊý£º    
-  37          * Ëµ    Ã÷£º
+  33          * å    ç§°ï¼š  Strlen
+  34          * åŠŸ    èƒ½ï¼š  è®¡ç®—å­—ç¬¦ä¸²é•¿åº¦
+  35          * å…¥å£å‚æ•°ï¼š  *DAT:æ–‡æœ¬æŒ‡é’ˆå˜é‡
+  36          * å‡ºå£å‚æ•°ï¼š    
+  37          * è¯´    æ˜Žï¼š
   38          **********************************************************/
   39          unsigned short Strlen(uchar *DAT)
   40          {
@@ -56,11 +56,11 @@ line level    source
   44   1      }
   45          
   46          /***********************************************************
-  47          * Ãû    ³Æ£º  Strcpy
-  48          * ¹¦    ÄÜ£º  ´®¿½±´º¯Êý
-  49          * Èë¿Ú²ÎÊý£º  *info  *data:ÎÄ±¾Ö¸Õë±äÁ¿
-  50          * ³ö¿Ú²ÎÊý£º    void
-  51          * Ëµ    Ã÷£º
+  47          * å    ç§°ï¼š  Strcpy
+  48          * åŠŸ    èƒ½ï¼š  ä¸²æ‹·è´å‡½æ•°
+  49          * å…¥å£å‚æ•°ï¼š  *info  *data:æ–‡æœ¬æŒ‡é’ˆå˜é‡
+  50          * å‡ºå£å‚æ•°ï¼š    void
+  51          * è¯´    æ˜Žï¼š
   52          **********************************************************/
 C51 COMPILER V9.54   XFS5152V2                                                             04/30/2020 01:44:05 PAGE 2   
 
@@ -76,65 +76,65 @@ line level    source
   61          
   62          
   63          /***********************************************************
-  64          * Ãû    ³Æ£º  YS-XFS5152 ÎÄ±¾ºÏ³Éº¯Êý
-  65          * ¹¦    ÄÜ£º  ·¢ËÍºÏ³ÉÎÄ±¾µ½XFS5152Ð¾Æ¬½øÐÐºÏ³É²¥·Å
-  66          * Èë¿Ú²ÎÊý£º  *data:ÎÄ±¾Ö¸Õë±äÁ¿
-  67          * ³ö¿Ú²ÎÊý£º
-  68          * Ëµ    Ã÷£º ±¾º¯ÊýÖ»ÓÃÓÚÎÄ±¾ºÏ³É£¬¾ß±¸±³¾°ÒôÀÖÑ¡Ôñ¡£Ä¬ÈÏ²¨ÌØÂÊ
-  69                      Îª115200bps(ÕâÀï²»×öÏÞÖÆ)¡£ 
-  70                      Frame_Info[500]³¤¶ÈÉèÖÃÎª500  ËùÒÔ×î¶àÒ»´ÎÐÔ·¢ËÍµÄ
-  71                      ÐÅÏ¢×Ö½ÚÎª450ÒÔÄÚ¡£
-  72          * µ÷ÓÃ·½·¨£ºÀý£º SYN_FrameInfo
+  64          * å    ç§°ï¼š  YS-XFS5152 æ–‡æœ¬åˆæˆå‡½æ•°
+  65          * åŠŸ    èƒ½ï¼š  å‘é€åˆæˆæ–‡æœ¬åˆ°XFS5152èŠ¯ç‰‡è¿›è¡Œåˆæˆæ’­æ”¾
+  66          * å…¥å£å‚æ•°ï¼š  *data:æ–‡æœ¬æŒ‡é’ˆå˜é‡
+  67          * å‡ºå£å‚æ•°ï¼š
+  68          * è¯´    æ˜Žï¼š æœ¬å‡½æ•°åªç”¨äºŽæ–‡æœ¬åˆæˆï¼Œå…·å¤‡èƒŒæ™¯éŸ³ä¹é€‰æ‹©ã€‚é»˜è®¤æ³¢ç‰¹çŽ‡
+  69                      ä¸º115200bps(è¿™é‡Œä¸åšé™åˆ¶)ã€‚ 
+  70                      Frame_Info[500]é•¿åº¦è®¾ç½®ä¸º500  æ‰€ä»¥æœ€å¤šä¸€æ¬¡æ€§å‘é€çš„
+  71                      ä¿¡æ¯å­—èŠ‚ä¸º450ä»¥å†…ã€‚
+  72          * è°ƒç”¨æ–¹æ³•ï¼šä¾‹ï¼š SYN_FrameInfo
   73          **********************************************************/
   74          void XFS_FrameInfo(uchar *dat)
   75          {
-  76   1          /****************ÐèÒª·¢ËÍµÄÎÄ±¾**********************************/
-  77   1          unsigned  char Frame_Info[500]= {1,1,1,1,1}; //¶¨ÒåµÄÎÄ±¾³¤¶È Ç°Îå¸öÒ»¶¨ÒªÉèÎª·Ç0£¬ºóÃæ´®Á¬½ÓÊ±¼ÆËã´®³
-             -¤ÒªÓÃ
+  76   1          /****************éœ€è¦å‘é€çš„æ–‡æœ¬**********************************/
+  77   1          unsigned  char Frame_Info[500]= {1,1,1,1,1}; //å®šä¹‰çš„æ–‡æœ¬é•¿åº¦ å‰äº”ä¸ªä¸€å®šè¦è®¾ä¸ºéž0ï¼ŒåŽé¢ä¸²è¿žæŽ¥æ—¶è®¡ç®—ä¸²ï¿½
+             -ã²î€²ï¿½
   78   1          unsigned  short length;
   79   1          unsigned  short pos;
   80   1          unsigned  short temp;
   81   1      
-  82   1          //Á¬½ÓÉùÒô²ÎÊýµÄ×Ö·û
+  82   1          //è¿žæŽ¥å£°éŸ³å‚æ•°çš„å­—ç¬¦
   83   1          temp = 5;
-  84   1          Strcpy(&Frame_Info[temp],YSpeed[YS]); //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÓïËÙ
+  84   1          Strcpy(&Frame_Info[temp],YSpeed[YS]); //åœ¨ä¿¡æ¯ä¸²ä¸­åŠ å…¥è¯­é€Ÿ
   85   1          temp = Strlen(Frame_Info);
-  86   1          Strcpy(&Frame_Info[temp],YTone[YT]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÓïµ÷
+  86   1          Strcpy(&Frame_Info[temp],YTone[YT]);  //åœ¨ä¿¡æ¯ä¸²ä¸­åŠ å…¥è¯­è°ƒ
   87   1          temp = Strlen(Frame_Info);
-  88   1          Strcpy(&Frame_Info[temp],YVolume[YV]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈëÒôÁ¿
+  88   1          Strcpy(&Frame_Info[temp],YVolume[YV]);  //åœ¨ä¿¡æ¯ä¸²ä¸­åŠ å…¥éŸ³é‡
   89   1          temp = Strlen(Frame_Info);
-  90   1          Strcpy(&Frame_Info[temp],YPeople[YP]);  //ÔÚÐÅÏ¢´®ÖÐ¼ÓÈë·¢ÒôÈË
+  90   1          Strcpy(&Frame_Info[temp],YPeople[YP]);  //åœ¨ä¿¡æ¯ä¸²ä¸­åŠ å…¥å‘éŸ³äºº
   91   1          temp = Strlen(Frame_Info);
   92   1      
-  93   1          length = Strlen(dat);       //ÐèÒª·¢ËÍÎÄ±¾µÄ³¤¶È
-  94   1          length = length+temp-3;               //¼ÆËãÊý¾ÝÇøµÄ×Ü³¤¶È
-  95   1          /*****************Ö¡¹Ì¶¨ÅäÖÃÐÅÏ¢**************************************/
-  96   1          Frame_Info[0] = 0xFD ;      //¹¹ÔìÖ¡Í·FD
-  97   1          Frame_Info[1] = length>>8 ;   //¹¹ÔìÊý¾ÝÇø³¤¶ÈµÄ¸ß×Ö½Ú
-  98   1          Frame_Info[2] = length%256;       //¹¹ÔìÊý¾ÝÇø³¤¶ÈµÄµÍ×Ö½Ú
-  99   1          Frame_Info[3] = 0x01 ;      //¹¹ÔìÃüÁî×Ö£ººÏ³É²¥·ÅÃüÁî
- 100   1          Frame_Info[4] = GBK;       //ÎÄ±¾±àÂë¸ñÊ½£ºGBK
+  93   1          length = Strlen(dat);       //éœ€è¦å‘é€æ–‡æœ¬çš„é•¿åº¦
+  94   1          length = length+temp-3;               //è®¡ç®—æ•°æ®åŒºçš„æ€»é•¿åº¦
+  95   1          /*****************å¸§å›ºå®šé…ç½®ä¿¡æ¯**************************************/
+  96   1          Frame_Info[0] = 0xFD ;      //æž„é€ å¸§å¤´FD
+  97   1          Frame_Info[1] = length>>8 ;   //æž„é€ æ•°æ®åŒºé•¿åº¦çš„é«˜å­—èŠ‚
+  98   1          Frame_Info[2] = length%256;       //æž„é€ æ•°æ®åŒºé•¿åº¦çš„ä½Žå­—èŠ‚
+  99   1          Frame_Info[3] = 0x01 ;      //æž„é€ å‘½ä»¤å­—ï¼šåˆæˆæ’­æ”¾å‘½ä»¤
+ 100   1          Frame_Info[4] = GBK;       //æ–‡æœ¬ç¼–ç æ ¼å¼ï¼šGBK
  101   1      
- 102   1          /*******************·¢ËÍÖ¡ÐÅÏ¢***************************************/
+ 102   1          /*******************å‘é€å¸§ä¿¡æ¯***************************************/
  103   1          Strcpy(&Frame_Info[temp],dat);
  104   1          for( pos = 0 ; pos<length+3 ; pos++ )
  105   1          {
- 106   2              XFS_PutChar(Frame_Info[pos]);//ÓÃ´®¿Ú·¢ËÍ ¿ÉÔÚÅäÖÃÎÄ¼þconfigÖÐÅäÖÃXFS_PutCharºêÀ´Ö¸¶¨¶Ë¿Ú·¢ËÍ
+ 106   2              XFS_PutChar(Frame_Info[pos]);//ç”¨ä¸²å£å‘é€ å¯åœ¨é…ç½®æ–‡ä»¶configä¸­é…ç½®XFS_PutCharå®æ¥æŒ‡å®šç«¯å£å‘é€
  107   2          }
  108   1      
  109   1      }
  110          
  111          /***********************************************************
- 112          * Ãû    ³Æ£º  YSOrder ÉùÒôÉèÖÃÃüÁîÖ´ÐÐº¯Êý
+ 112          * å    ç§°ï¼š  YSOrder å£°éŸ³è®¾ç½®å‘½ä»¤æ‰§è¡Œå‡½æ•°
 C51 COMPILER V9.54   XFS5152V2                                                             04/30/2020 01:44:05 PAGE 3   
 
- 113          * ¹¦    ÄÜ£º  ÉèÖÃÓïËÙÓïµ÷ÒôÁ¿ÒÔ¼°ÈËÉù
- 114          * Èë¿Ú²ÎÊý£º  orderÎªÃüÁî²ÎÊý  ·¶Î§0x00-0x07
- 115          * ³ö¿Ú²ÎÊý£º
- 116          * Ëµ    Ã÷£º
- 117          * µ÷ÓÃ·½·¨£ºÀý£º ±¾³ÌÐòÖÐÔÚÖ÷º¯ÊýÖÐ¼ì²âÓïÒôÉèÖÃÃüÁîµ½À´Ê±Ö´ÐÐ
+ 113          * åŠŸ    èƒ½ï¼š  è®¾ç½®è¯­é€Ÿè¯­è°ƒéŸ³é‡ä»¥åŠäººå£°
+ 114          * å…¥å£å‚æ•°ï¼š  orderä¸ºå‘½ä»¤å‚æ•°  èŒƒå›´0x00-0x07
+ 115          * å‡ºå£å‚æ•°ï¼š
+ 116          * è¯´    æ˜Žï¼š
+ 117          * è°ƒç”¨æ–¹æ³•ï¼šä¾‹ï¼š æœ¬ç¨‹åºä¸­åœ¨ä¸»å‡½æ•°ä¸­æ£€æµ‹è¯­éŸ³è®¾ç½®å‘½ä»¤åˆ°æ¥æ—¶æ‰§è¡Œ
  118          **********************************************************/
- 119          void YSOrder(unsigned char order)//ÓïÒôÉèÖÃÃüÁî
+ 119          void YSOrder(unsigned char order)//è¯­éŸ³è®¾ç½®å‘½ä»¤
  120          {
  121   1          unsigned  char temp[20];
  122   1          unsigned  char num[3];
@@ -142,33 +142,33 @@ line level    source
  124   1          switch( order )
  125   1          {
  126   2          case 0x01:
- 127   2              YS = (YS+1)%11;//ÓïËÙ¼Ó¿ì
+ 127   2              YS = (YS+1)%11;//è¯­é€ŸåŠ å¿«
  128   2              break;
  129   2          case 0x02:
- 130   2              YS = (YS+11-1)%11;//ÓïËÙ¼õÂý
+ 130   2              YS = (YS+11-1)%11;//è¯­é€Ÿå‡æ…¢
  131   2              break;
  132   2          case 0x03:
- 133   2              YT = (YT+1)%11;//Óïµ÷ÌáÉý
+ 133   2              YT = (YT+1)%11;//è¯­è°ƒæå‡
  134   2              break;
  135   2          case 0x04:
- 136   2              YT = (YT+11-1)%11;//Óïµ÷½µµÍ
+ 136   2              YT = (YT+11-1)%11;//è¯­è°ƒé™ä½Ž
  137   2              break;
  138   2          case 0x05:
- 139   2              YV = (YV+1)%11;//ÒôÁ¿¼Ó
+ 139   2              YV = (YV+1)%11;//éŸ³é‡åŠ 
  140   2              break;
  141   2          case 0x06:
- 142   2              YV = (YV+11-1)%11;//ÒôÁ¿¼õ
+ 142   2              YV = (YV+11-1)%11;//éŸ³é‡å‡
  143   2              break;
  144   2          case 0x07:
- 145   2              YP = (YP+1)%6;//»»Ò»ÖÖÉùÒô
- 146   2              XFS_FrameInfo("ÎÒÏÖÔÚµÄÉùÒôÊÇÕâÑùµÄ");
+ 145   2              YP = (YP+1)%6;//æ¢ä¸€ç§å£°éŸ³
+ 146   2              XFS_FrameInfo("æˆ‘çŽ°åœ¨çš„å£°éŸ³æ˜¯è¿™æ ·çš„");
  147   2              break;
- 148   2          case 0x08://»Ö¸´Ä¬ÈÏÖµ
- 149   2              YS = 5;//ÓïËÙÖ¸Õë 0-10
- 150   2              YT = 5;//Òôµ÷Ö¸Õë 0-10
- 151   2              YV = 5;//ÒôÁ¿Ö¸Õë 0-10
- 152   2              YP = 1;//·¢ÒôÈËÖ¸Õë 0-5
- 153   2              XFS_FrameInfo("ÉùÒôÒÑ»Ö¸´Ä¬ÈÏÉèÖÃ");
+ 148   2          case 0x08://æ¢å¤é»˜è®¤å€¼
+ 149   2              YS = 5;//è¯­é€ŸæŒ‡é’ˆ 0-10
+ 150   2              YT = 5;//éŸ³è°ƒæŒ‡é’ˆ 0-10
+ 151   2              YV = 5;//éŸ³é‡æŒ‡é’ˆ 0-10
+ 152   2              YP = 1;//å‘éŸ³äººæŒ‡é’ˆ 0-5
+ 153   2              XFS_FrameInfo("å£°éŸ³å·²æ¢å¤é»˜è®¤è®¾ç½®");
  154   2              break;
  155   2          default:
  156   2              break;
@@ -186,13 +186,13 @@ line level    source
  168   3                  num[0] = YS+48;
  169   3                  num[1] = 0;
  170   3              }
- 171   2              Strcpy(temp,"ÓïËÙÒÑµ÷µ½");
+ 171   2              Strcpy(temp,"è¯­é€Ÿå·²è°ƒåˆ°");
  172   2              length = Strlen(temp);
  173   2              Strcpy(&temp[length],num);
  174   2              length = Strlen(temp);
 C51 COMPILER V9.54   XFS5152V2                                                             04/30/2020 01:44:05 PAGE 4   
 
- 175   2              Strcpy(&temp[length],"¼¶");
+ 175   2              Strcpy(&temp[length],"çº§");
  176   2              XFS_FrameInfo(temp);
  177   2          }
  178   1          else if( order == 0x03 || order == 0x04 )
@@ -208,11 +208,11 @@ line level    source
  188   3                  num[0] = YT+48;
  189   3                  num[1] = 0;
  190   3              }
- 191   2              Strcpy(temp,"Óïµ÷ÒÑµ÷µ½");
+ 191   2              Strcpy(temp,"è¯­è°ƒå·²è°ƒåˆ°");
  192   2              length = Strlen(temp);
  193   2              Strcpy(&temp[length],num);
  194   2              length = Strlen(temp);
- 195   2              Strcpy(&temp[length],"¼¶");
+ 195   2              Strcpy(&temp[length],"çº§");
  196   2              XFS_FrameInfo(temp);
  197   2          }
  198   1          else if( order == 0x05 || order == 0x06 )
@@ -229,11 +229,11 @@ line level    source
  209   3                  num[0] = YV+48;
  210   3                  num[1] = 0;
  211   3              }
- 212   2              Strcpy(temp,"ÒôÁ¿ÒÑµ÷µ½");
+ 212   2              Strcpy(temp,"éŸ³é‡å·²è°ƒåˆ°");
  213   2              length = Strlen(temp);
  214   2              Strcpy(&temp[length],num);
  215   2              length = Strlen(temp);
- 216   2              Strcpy(&temp[length],"¼¶");
+ 216   2              Strcpy(&temp[length],"çº§");
  217   2              XFS_FrameInfo(temp);
  218   2          }
  219   1      }

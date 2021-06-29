@@ -3,20 +3,20 @@
 
 #include "stc15w.h"
 #include "config.h"
-	
-//¼ÓËÙ¶È¸÷·ÖÁ¿µÄÖµ
+
+//åŠ é€Ÿåº¦å„åˆ†é‡çš„å€¼
 static int AccelXValue;
 static int AccelYValue;
 static int AccelZValue;
-//½Ç¶È¸÷·ÖÁ¿µÄÖµ
+//è§’åº¦å„åˆ†é‡çš„å€¼
 static int GyroXValue;
 static int GyroYValue;
 static int GyroZValue;
-//ÎÂ¶ÈÖµ
+//æ¸©åº¦å€¼
 static int TempValue;
 
-extern void InitMPU6050();//MPU6050³õÊ¼»¯
-extern int GetData(uchar REG_Address);//»ñÈ¡Ö¸¶¨µØÖ·ÏÂµÄÊı¾İ
-extern void UpDataAll();//¸üĞÂËùÓĞÊı¾İ
+extern void InitMPU6050();             //MPU6050åˆå§‹åŒ–
+extern int GetData(uchar REG_Address); //è·å–æŒ‡å®šåœ°å€ä¸‹çš„æ•°æ®
+extern void UpDataAll();               //æ›´æ–°æ‰€æœ‰æ•°æ®
 
 #endif

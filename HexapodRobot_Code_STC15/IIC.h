@@ -4,20 +4,19 @@
 #include "stc15w.h"
 #include "config.h"
 
-//--ÔÚconfig.hÖĞÒÑ¶¨ÒåIIC½Ó¿Ú--//
-//--¶¨ÒåÊ¹ÓÃµÄIO¿Ú--//
+//--åœ¨config.hä¸­å·²å®šä¹‰IICæ¥å£--//
+//--å®šä¹‰ä½¿ç”¨çš„IOå£--//
 //sbit I2C_SCL = P3^5;
 //sbit I2C_SDA = P3^4;
 
-//--ÉùÃ÷È«¾Ö±äÁ¿--//
-extern void I2C_Start();//ÆğÊ¼ĞÅºÅ
-extern void I2C_Stop();//ÖÕÖ¹ĞÅºÅ
-extern void I2C_SendByte(uchar dat);//·¢ËÍÒ»¸ö×Ö½Ú
-extern uchar I2C_ReadByte();//¶ÁÈ¡Ò»¸ö×Ö½Ú
-extern void I2C_SendACK(bit ack);//·¢ËÍÓ¦´ğĞÅºÅ
-extern bit I2C_RecvACK();//½ÓÊÕÓ¦´ğĞÅºÅ
-extern void WriteI2C(uchar SlaveAddress,uchar REG_Address,uchar REG_data);//Ö¸¶¨µØÖ·ÏÂĞ´ÈëÊı¾İ
-extern uchar ReadI2C(uchar SlaveAddress,uchar REG_Address);//»ñÈ¡Ö¸¶¨µØÖ·ÏÂµÄÊı¾İ
+//--å£°æ˜å…¨å±€å˜é‡--//
+extern void I2C_Start();                                                     //èµ·å§‹ä¿¡å·
+extern void I2C_Stop();                                                      //ç»ˆæ­¢ä¿¡å·
+extern void I2C_SendByte(uchar dat);                                         //å‘é€ä¸€ä¸ªå­—èŠ‚
+extern uchar I2C_ReadByte();                                                 //è¯»å–ä¸€ä¸ªå­—èŠ‚
+extern void I2C_SendACK(bit ack);                                            //å‘é€åº”ç­”ä¿¡å·
+extern bit I2C_RecvACK();                                                    //æ¥æ”¶åº”ç­”ä¿¡å·
+extern void WriteI2C(uchar SlaveAddress, uchar REG_Address, uchar REG_data); //æŒ‡å®šåœ°å€ä¸‹å†™å…¥æ•°æ®
+extern uchar ReadI2C(uchar SlaveAddress, uchar REG_Address);                 //è·å–æŒ‡å®šåœ°å€ä¸‹çš„æ•°æ®
 
 #endif
-

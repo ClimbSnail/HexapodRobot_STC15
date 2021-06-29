@@ -4,158 +4,154 @@
 
 uchar timer4Flag = 0;
 
-//��ʱ��0��ʼ��
+//定时器0初始化
 void Timer0Init_Mode1T(void)
 {
-    EA = 1;	  //�������ж�
-    ET0 = 1;	   // ��ʱ��0����
-    TMOD |= 0x01;//���ö�ʱ��0Ϊ������ʽ1(16λ������)
-    //�ȳ�ʼ��ֵ
+    EA = 1;       //开启总中断
+    ET0 = 1;      // 定时器0可用
+    TMOD |= 0x01; //设置定时器0为工作方式1(16位计数器)
+    //先初始赋值
     TH0 = 0xFA;
     TL0 = 0x24;
-    TR0 = 1;//��ʱ��0��ʼ����
+    TR0 = 1; //定时器0开始计数
 }
 
 void Timer0Init_Mode12T(void)
 {
-    AUXR &= 0x7F;		//��ʱ��ʱ��12Tģʽ
-    TMOD &= 0xF0;		//���ö�ʱ��ģʽ
-    TMOD |= 0x01;//���ö�ʱ��0Ϊ������ʽ1(16λ������)
-    TL0 = 0x00;		//���ö�ʱ��ֵ
-    TH0 = 0x70;		//���ö�ʱ��ֵ
-    TF0 = 0;		//���TF0��־
-    TR0 = 1;       //��ʱ��0��ʼ��ʱ
-    ET0 = 1;      //ʹ�ܶ�ʱ��0�ж�
+    AUXR &= 0x7F; //定时器时钟12T模式
+    TMOD &= 0xF0; //设置定时器模式
+    TMOD |= 0x01; //设置定时器0为工作方式1(16位计数器)
+    TL0 = 0x00;   //设置定时初值
+    TH0 = 0x70;   //设置定时初值
+    TF0 = 0;      //清除TF0标志
+    TR0 = 1;      //定时器0开始计时
+    ET0 = 1;      //使能定时器0中断
     EA = 1;
 }
 
-
-//��ʱ��1��ʼ��
+//定时器1初始化
 void Timer1Init_Mode1T(void)
 {
-    EA = 1;	  //�������ж�
-    ET1 = 1;	   // ��ʱ��1����
-    TMOD |= 0x10;//���ö�ʱ��0Ϊ������ʽ1(16λ������)
-    //�ȳ�ʼ��ֵ
+    EA = 1;       //开启总中断
+    ET1 = 1;      // 定时器1可用
+    TMOD |= 0x10; //设置定时器0为工作方式1(16位计数器)
+    //先初始赋值
     TH1 = 0xFA;
     TL1 = 0x24;
-    TR1 = 1;//��ʱ��1��ʼ����
+    TR1 = 1; //定时器1开始计数
 }
 
 void Timer1Init_Mode12T(void)
 {
-    AUXR &= 0xBF;		//��ʱ��ʱ��12Tģʽ
-    TMOD &= 0x0F;		//���ö�ʱ��ģʽ
-    TL1 = 0x00;		//���ö�ʱ��ֵ
-    TH1 = 0x70;		//���ö�ʱ��ֵ
-    TF1 = 0;		//���TF1��־
-    TR1 = 1;		//��ʱ��1��ʼ��ʱ
-    EA = 1;	  //�������ж�
-    ET1 = 1;	   // ��ʱ��0����
+    AUXR &= 0xBF; //定时器时钟12T模式
+    TMOD &= 0x0F; //设置定时器模式
+    TL1 = 0x00;   //设置定时初值
+    TH1 = 0x70;   //设置定时初值
+    TF1 = 0;      //清除TF1标志
+    TR1 = 1;      //定时器1开始计时
+    EA = 1;       //开启总中断
+    ET1 = 1;      // 定时器0可用
 }
 
-//��ʱ��2��ʼ��
+//定时器2初始化
 void Timer2Init_Mode1T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x04;	   // ��ʱ��2����
-    AUXR |= 0x04;		//��ʱ��ʱ��1Tģʽ
-    T2L = 0x9A;		//���ö�ʱ��ֵ
-    T2H = 0xA9;		//���ö�ʱ��ֵ
-    AUXR |= 0x10;		//��ʱ��2��ʼ��ʱ
+    EA = 1;       //开启总中断
+    IE2 |= 0x04;  // 定时器2可用
+    AUXR |= 0x04; //定时器时钟1T模式
+    T2L = 0x9A;   //设置定时初值
+    T2H = 0xA9;   //设置定时初值
+    AUXR |= 0x10; //定时器2开始计时
 }
 
 void Timer2Init_Mode12T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x04;	   // ��ʱ��2����
-    AUXR &= 0xFB;		//��ʱ��ʱ��12Tģʽ
-    T2L = 0xCD;		//���ö�ʱ��ֵ
-    T2H = 0xF8;		//���ö�ʱ��ֵ
-    AUXR |= 0x10;		//��ʱ��2��ʼ��ʱ
+    EA = 1;       //开启总中断
+    IE2 |= 0x04;  // 定时器2可用
+    AUXR &= 0xFB; //定时器时钟12T模式
+    T2L = 0xCD;   //设置定时初值
+    T2H = 0xF8;   //设置定时初值
+    AUXR |= 0x10; //定时器2开始计时
 }
 
-//��ʱ��3��ʼ��
+//定时器3初始化
 void Timer3Init_Mode1T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x20;	   // ��ʱ��3����
-    T4T3M |= 0x02;		//��ʱ��ʱ��1Tģʽ
-    T3L = 0x9A;		//���ö�ʱ��ֵ
-    T3H = 0xA9;		//���ö�ʱ��ֵ
-    T4T3M |= 0x08;		//��ʱ��3��ʼ��ʱ
+    EA = 1;        //开启总中断
+    IE2 |= 0x20;   // 定时器3可用
+    T4T3M |= 0x02; //定时器时钟1T模式
+    T3L = 0x9A;    //设置定时初值
+    T3H = 0xA9;    //设置定时初值
+    T4T3M |= 0x08; //定时器3开始计时
 }
 
 void Timer3Init_Mode12T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x20;	   // ��ʱ��3����
-    T4T3M &= 0xFD;		//��ʱ��ʱ��12Tģʽ
-    T3L = 0xCD;		//���ö�ʱ��ֵ
-    T3H = 0xF8;		//���ö�ʱ��ֵ
-    T4T3M |= 0x08;		//��ʱ��3��ʼ��ʱ
+    EA = 1;        //开启总中断
+    IE2 |= 0x20;   // 定时器3可用
+    T4T3M &= 0xFD; //定时器时钟12T模式
+    T3L = 0xCD;    //设置定时初值
+    T3H = 0xF8;    //设置定时初值
+    T4T3M |= 0x08; //定时器3开始计时
 }
 
-//��ʱ��4��ʼ��
+//定时器4初始化
 void Timer4Init_Mode1T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x40;	   // ��ʱ��4����
-    T4T3M |= 0x20;		//��ʱ��ʱ��1Tģʽ
-    T4L = 0x9A;		//���ö�ʱ��ֵ
-    T4H = 0xA9;		//���ö�ʱ��ֵ
-    T4T3M |= 0x80;		//��ʱ��4��ʼ��ʱ
+    EA = 1;        //开启总中断
+    IE2 |= 0x40;   // 定时器4可用
+    T4T3M |= 0x20; //定时器时钟1T模式
+    T4L = 0x9A;    //设置定时初值
+    T4H = 0xA9;    //设置定时初值
+    T4T3M |= 0x80; //定时器4开始计时
 }
 
 void Timer4Init_Mode12T(void)
 {
-    EA = 1;	  //�������ж�
-    IE2 |= 0x40;	   // ��ʱ��4����
-	T4T3M &= 0xDF;		//��ʱ��ʱ��12Tģʽ
-	T4L = 0x00;		//���ö�ʱ��ֵ 25ms
-	T4H = 0x4C;		//���ö�ʱ��ֵ	25ms
-	T4T3M |= 0x80;		//��ʱ��4��ʼ��ʱ
+    EA = 1;        //开启总中断
+    IE2 |= 0x40;   // 定时器4可用
+    T4T3M &= 0xDF; //定时器时钟12T模式
+    T4L = 0x00;    //设置定时初值 25ms
+    T4H = 0x4C;    //设置定时初值	25ms
+    T4T3M |= 0x80; //定时器4开始计时
 }
 
-
-//��ʱ���ж�0
-void timer0 (void) interrupt 1
+//定时器中断0
+void timer0(void) interrupt 1
 {
     PwmCH0_Control();
     LED = !LED;
 }
 
-//��ʱ���ж�1
-void timer1 (void) interrupt 3 
+//定时器中断1
+void timer1(void) interrupt 3
 {
     PwmCH1_Control();
 }
 
-//��ʱ���ж�2
-void timer2 (void) interrupt 12
+//定时器中断2
+void timer2(void) interrupt 12
 {
 }
 
-//��ʱ���ж�3
-void timer3 (void) interrupt 19
+//定时器中断3
+void timer3(void) interrupt 19
 {
     PwmCH2_Control();
 }
 
-//��ʱ���ж�4
-void timer4 (void) interrupt 20
+//定时器中断4
+void timer4(void) interrupt 20
 {
-	timer4Flag = !timer4Flag;
-	//confgi.h�����õ���50ms  ����Ҫ�������жϲ��ܴ�50ms
-	T4L = 0x00;		//���ö�ʱ��ֵ 25ms
-	T4H = 0x4C;		//���ö�ʱ��ֵ	25ms
-	if( timer4Flag )
-	{
-		UpData();
-	}
-	else
-	{
-	}
+    timer4Flag = !timer4Flag;
+    //confgi.h中配置的是50ms  所以要进两次中断才能达50ms
+    T4L = 0x00; //设置定时初值 25ms
+    T4H = 0x4C; //设置定时初值	25ms
+    if (timer4Flag)
+    {
+        UpData();
+    }
+    else
+    {
+    }
 }
-
-

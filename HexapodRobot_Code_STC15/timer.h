@@ -4,18 +4,15 @@
 #include "stc15w.h"
 #include "config.h"
 
-extern void Timer0Init_Mode1T(void);//¶¨Ê±Æ÷0³õÊ¼»¯1TÄ£Ê½
-extern void Timer0Init_Mode12T(void);//¶¨Ê±Æ÷0³õÊ¼»¯12TÄ£Ê½
-extern void Timer1Init_Mode1T(void);//¶¨Ê±Æ÷1³õÊ¼»¯1TÄ£Ê½
-extern void Timer1Init_Mode12T(void);//¶¨Ê±Æ÷1³õÊ¼»¯12TÄ£Ê½
-extern void Timer2Init_Mode1T(void);//¶¨Ê±Æ÷2³õÊ¼»¯1TÄ£Ê½
-extern void Timer2Init_Mode12T(void);//¶¨Ê±Æ÷2³õÊ¼»¯12TÄ£Ê½
-extern void Timer3Init_Mode1T(void);//¶¨Ê±Æ÷3³õÊ¼»¯1TÄ£Ê½
-extern void Timer3Init_Mode12T(void);//¶¨Ê±Æ÷3³õÊ¼»¯12TÄ£Ê½
-extern void Timer4Init_Mode1T(void);//¶¨Ê±Æ÷4³õÊ¼»¯1TÄ£Ê½
-extern void Timer4Init_Mode12T(void);//¶¨Ê±Æ÷4³õÊ¼»¯12TÄ£Ê½
-
-
+extern void Timer0Init_Mode1T(void);  //å®šæ—¶å™¨0åˆå§‹åŒ–1Tæ¨¡å¼
+extern void Timer0Init_Mode12T(void); //å®šæ—¶å™¨0åˆå§‹åŒ–12Tæ¨¡å¼
+extern void Timer1Init_Mode1T(void);  //å®šæ—¶å™¨1åˆå§‹åŒ–1Tæ¨¡å¼
+extern void Timer1Init_Mode12T(void); //å®šæ—¶å™¨1åˆå§‹åŒ–12Tæ¨¡å¼
+extern void Timer2Init_Mode1T(void);  //å®šæ—¶å™¨2åˆå§‹åŒ–1Tæ¨¡å¼
+extern void Timer2Init_Mode12T(void); //å®šæ—¶å™¨2åˆå§‹åŒ–12Tæ¨¡å¼
+extern void Timer3Init_Mode1T(void);  //å®šæ—¶å™¨3åˆå§‹åŒ–1Tæ¨¡å¼
+extern void Timer3Init_Mode12T(void); //å®šæ—¶å™¨3åˆå§‹åŒ–12Tæ¨¡å¼
+extern void Timer4Init_Mode1T(void);  //å®šæ—¶å™¨4åˆå§‹åŒ–1Tæ¨¡å¼
+extern void Timer4Init_Mode12T(void); //å®šæ—¶å™¨4åˆå§‹åŒ–12Tæ¨¡å¼
 
 #endif
-

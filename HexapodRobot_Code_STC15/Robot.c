@@ -1,12 +1,12 @@
 /***************************************************************
-±¾Áù×ã»úÆ÷ÈË³ÌÐòÊ¹ÓÃµÄÊÇSTC15W4K48S4µ¥Æ¬»ú(Óë±¾µ¥Æ¬»ú½á¹¹ÏàÍ¬µÄ
-¾ù¿ÉÒÔÊ¹ÓÃ)Ä¬ÈÏ22.1184MHzµÄ¾§Õñ¡£³ÌÐòÎÈ¶¨²úÉú21Â·PWM(¾ùÎªÄ£ÄâPWM)
-²úÉúµÄ¶¯×÷Ó¦Óë¶æ»úµÄ³õÊ¼°²×°×´Ì¬ÓÐ¹Ø
+æœ¬å…­è¶³æœºå™¨äººç¨‹åºä½¿ç”¨çš„æ˜¯STC15W4K48S4å•ç‰‡æœº(ä¸Žæœ¬å•ç‰‡æœºç»“æž„ç›¸åŒçš„
+å‡å¯ä»¥ä½¿ç”¨)é»˜è®¤22.1184MHzçš„æ™¶æŒ¯ã€‚ç¨‹åºç¨³å®šäº§ç”Ÿ21è·¯PWM(å‡ä¸ºæ¨¡æ‹ŸPWM)
+äº§ç”Ÿçš„åŠ¨ä½œåº”ä¸Žèˆµæœºçš„åˆå§‹å®‰è£…çŠ¶æ€æœ‰å…³
 ***************************************************************/
 
-//P0¶ÔÓ¦PWM0~7 P2¶ÔÓ¦PWM9~16 P1^0ºÍP1^1·Ö±ð¶ÔÓ¦PWM8 PWM17
-//Ê¹ÓÃ´®¿Ú1½øÐÐÁ¬½Ó´®¿ÚÀ¶ÑÀÉè±¸
-//Ê¹ÓÃP1.6ÓëP1.7½øÐÐAD²É¼¯
+//P0å¯¹åº”PWM0~7 P2å¯¹åº”PWM9~16 P1^0å’ŒP1^1åˆ†åˆ«å¯¹åº”PWM8 PWM17
+//ä½¿ç”¨ä¸²å£1è¿›è¡Œè¿žæŽ¥ä¸²å£è“ç‰™è®¾å¤‡
+//ä½¿ç”¨P1.6ä¸ŽP1.7è¿›è¡ŒADé‡‡é›†
 
 #include "stc15w.h"
 #include "config.h"
@@ -21,15 +21,15 @@
 #include "ActionArr.h"
 
 /************************************************************************
-º¯ÊýÃû³Æ£º	IOInit(void) ³õÊ¼»¯IO¿Ú
-¹¦ÄÜÃèÊö£º ÉèÖÃ¸÷¸öIO¿ÚÊä³öÄ£Ê½Îª:´«Í³Ä£Ê½ ×¼Ë«Ïò¿Ú
-Èë¿Ú²ÎÊý£º none
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ²»³õÊ¼»¯»áÊä³ö²»ÁËPWM£¬P30 P31Èç¹ûÇåÁã ´®¿Ú½«²»ÄÜÓÃ
+å‡½æ•°åç§°ï¼š	IOInit(void) åˆå§‹åŒ–IOå£
+åŠŸèƒ½æè¿°ï¼š è®¾ç½®å„ä¸ªIOå£è¾“å‡ºæ¨¡å¼ä¸º:ä¼ ç»Ÿæ¨¡å¼ å‡†åŒå‘å£
+å…¥å£å‚æ•°ï¼š none
+è¿” å›ž å€¼ï¼š none
+å…¶ä»–è¯´æ˜Žï¼š ä¸åˆå§‹åŒ–ä¼šè¾“å‡ºä¸äº†PWMï¼ŒP30 P31å¦‚æžœæ¸…é›¶ ä¸²å£å°†ä¸èƒ½ç”¨
 **************************************************************************/
 void IOInit(void)
 {
-    //²»ÉèÖÃ»áÊä³ö²»ÁËPWM
+    //ä¸è®¾ç½®ä¼šè¾“å‡ºä¸äº†PWM
     P0M0 = 0x00;
     P0M1 = 0x00;
     P1M0 = 0x00;
@@ -47,117 +47,112 @@ void IOInit(void)
     P7M0 = 0x00;
     P7M1 = 0x00;
 
-    //ÒÔÏÂ×îºÃÇåÁã
+    //ä»¥ä¸‹æœ€å¥½æ¸…é›¶
     P0 = 0x00;
     P1 = 0x00;
     P2 = 0x00;
-    P3 = 0x03;	//P30 P31Èç¹ûÇåÁã ´®¿Ú½«²»ÄÜÓÃ
+    P3 = 0x03; //P30 P31å¦‚æžœæ¸…é›¶ ä¸²å£å°†ä¸èƒ½ç”¨
     P4 = 0x00;
     P5 = 0x00;
 }
 
-
 /************************************************************************
-º¯ÊýÃû³Æ£º	ExecuteOrder(unsigned char order)
-¹¦ÄÜÃèÊö£º ¼ÆËãÃ¿´Îpwm¸üÐÂÐèÒª¶à´óµÄÔöÁ¿(ÓÃÓÚ¼õËÙ¿ØÖÆ)
-Èë¿Ú²ÎÊý£º orderÃüÁî´úºÅ
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º Ö´ÐÐ¶¯»­Ö¸Áî order·¶Î§0x00~0x40 ×Ü¹²ÄÜÈÝÄÉ65ÌõÖ¸Áî(0x0DÒòÎª½ÓÊÜÖ¡
-					´¦ÀíµÄÎÊÌâ,ÔÝÊ±²»ÄÜÓÃ)
+å‡½æ•°åç§°ï¼š	ExecuteOrder(unsigned char order)
+åŠŸèƒ½æè¿°ï¼š è®¡ç®—æ¯æ¬¡pwmæ›´æ–°éœ€è¦å¤šå¤§çš„å¢žé‡(ç”¨äºŽå‡é€ŸæŽ§åˆ¶)
+å…¥å£å‚æ•°ï¼š orderå‘½ä»¤ä»£å·
+è¿” å›ž å€¼ï¼š none
+å…¶ä»–è¯´æ˜Žï¼š æ‰§è¡ŒåŠ¨ç”»æŒ‡ä»¤ orderèŒƒå›´0x00~0x40 æ€»å…±èƒ½å®¹çº³65æ¡æŒ‡ä»¤(0x0Då› ä¸ºæŽ¥å—å¸§
+					å¤„ç†çš„é—®é¢˜,æš‚æ—¶ä¸èƒ½ç”¨)
 **************************************************************************/
 void ExecuteOrder(unsigned char order)
 {
-    //ÔÚ´Ë²¹³äÖ¸ÁîÖ´ÐÐ´úÂë
+    //åœ¨æ­¤è¡¥å……æŒ‡ä»¤æ‰§è¡Œä»£ç 
 }
 
 /************************************************************************
-º¯ÊýÃû³Æ£º	CheckAndDealY( void )
-¹¦ÄÜÃèÊö£º ¼ì²é²¢´¦ÀíÓïÒôÖ¸Áî
-Èë¿Ú²ÎÊý£º none
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ¿ªÍ·¡®YS¡¯ÎªÓïÒôÉèÖÃÖ¸Áî ¿ªÍ·¡®YT¡¯ÎªÓïÒô×ª·¢Ö¸Áî
+å‡½æ•°åç§°ï¼š	CheckAndDealY( void )
+åŠŸèƒ½æè¿°ï¼š æ£€æŸ¥å¹¶å¤„ç†è¯­éŸ³æŒ‡ä»¤
+å…¥å£å‚æ•°ï¼š none
+è¿” å›ž å€¼ï¼š none
+å…¶ä»–è¯´æ˜Žï¼š å¼€å¤´â€˜YSâ€™ä¸ºè¯­éŸ³è®¾ç½®æŒ‡ä»¤ å¼€å¤´â€˜YTâ€™ä¸ºè¯­éŸ³è½¬å‘æŒ‡ä»¤
 **************************************************************************/
-char CheckAndDealY( void )
+char CheckAndDealY(void)
 {
-    if( usart1ReceiveSuccess2 )//Èç¹ûÓïÒô»º³åÇø±íÃ÷½ÓÊÕµ½Íê³ÉÖ¸ÁîÖ¡
+    if (usart1ReceiveSuccess2) //å¦‚æžœè¯­éŸ³ç¼“å†²åŒºè¡¨æ˜ŽæŽ¥æ”¶åˆ°å®ŒæˆæŒ‡ä»¤å¸§
     {
-        if( USART1_RX_BUF2[0] == 'Y' )//ÓïÒôÃüÁîÖ¡Í·±êÖ¾
-            if( USART1_RX_BUF2[1] == 'S' )
-                YSOrder( USART1_RX_BUF2[2] );//ÓïÒôÉèÖÃÃüÁî
-            else if( USART1_RX_BUF2[1] == 'T' ) //ÓïÒô×ª·¢
-                XFS_FrameInfo( &USART1_RX_BUF2[2] );
+        if (USART1_RX_BUF2[0] == 'Y') //è¯­éŸ³å‘½ä»¤å¸§å¤´æ ‡å¿—
+            if (USART1_RX_BUF2[1] == 'S')
+                YSOrder(USART1_RX_BUF2[2]);    //è¯­éŸ³è®¾ç½®å‘½ä»¤
+            else if (USART1_RX_BUF2[1] == 'T') //è¯­éŸ³è½¬å‘
+                XFS_FrameInfo(&USART1_RX_BUF2[2]);
 
-        usart1ReceiveSuccess2 = 0;//±êÖ¾Î»ÇåÁã
+        usart1ReceiveSuccess2 = 0; //æ ‡å¿—ä½æ¸…é›¶
         return 1;
     }
     else
         return 0;
 }
 
-
 /************************************************************************
-º¯ÊýÃû³Æ£º	CheckAndDealActionDebug( void )
-¹¦ÄÜÃèÊö£º ¼ì²é²¢´¦Àí¶¯×÷¼°µ÷ÊÔÖ¸Áî
-Èë¿Ú²ÎÊý£º none
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ¿ªÍ·¡®D¡¯ÎªDebugÄ£Ê½ ÆäÓàÎª¶¯×÷Ö¸Áî
+å‡½æ•°åç§°ï¼š	CheckAndDealActionDebug( void )
+åŠŸèƒ½æè¿°ï¼š æ£€æŸ¥å¹¶å¤„ç†åŠ¨ä½œåŠè°ƒè¯•æŒ‡ä»¤
+å…¥å£å‚æ•°ï¼š none
+è¿” å›ž å€¼ï¼š none
+å…¶ä»–è¯´æ˜Žï¼š å¼€å¤´â€˜Dâ€™ä¸ºDebugæ¨¡å¼ å…¶ä½™ä¸ºåŠ¨ä½œæŒ‡ä»¤
 **************************************************************************/
-char CheckAndDealActionDebug( void )
+char CheckAndDealActionDebug(void)
 {
-    if( usart1ReceiveSuccess )//ÊÇ·ñÒÑ½ÓÊÕÍêÕûÖ¡
+    if (usart1ReceiveSuccess) //æ˜¯å¦å·²æŽ¥æ”¶å®Œæ•´å¸§
     {
-        if( USART1_RX_BUF[0] == 'D' )//Êý×éµ÷ÊÔÄ£Ê½Ö¡Í·±êÖ¾
-            ReceiveDataConvertToPwmValue();//Êý×éµ÷ÊÔÄ£Ê½ Ò»´Îµ÷ÊÔÖ´ÐÐ1¸ö¶¯×÷
+        if (USART1_RX_BUF[0] == 'D')        //æ•°ç»„è°ƒè¯•æ¨¡å¼å¸§å¤´æ ‡å¿—
+            ReceiveDataConvertToPwmValue(); //æ•°ç»„è°ƒè¯•æ¨¡å¼ ä¸€æ¬¡è°ƒè¯•æ‰§è¡Œ1ä¸ªåŠ¨ä½œ
 
-        while( USART1_RX_BUF[0] && USART1_RX_BUF[0] < 0x41 )//Ìí¼ÓÑ­»·µÄÄ¿µÄÊÇÖ»Òª·¢ËÍÒ»´ÎÖ¸Áî¾Í¿ÉÒÔ²»Í£Ö´ÐÐÒ»¸ö¶¯×÷ Ö±µ½ÏÂÒ»ÌõÖ¸Áî
-            ExecuteOrder(USART1_RX_BUF[0]);//Ö´ÐÐ¶¯×÷Ö¸Áî ÐèÒª½ÓÊÕµ½Í£Ö¹ÃüÁîµÄÊ±ºò£¬µ±Ç°¶¯×÷²Å¿ÉÒÔ±»´ò¶Ï
+        while (USART1_RX_BUF[0] && USART1_RX_BUF[0] < 0x41) //æ·»åŠ å¾ªçŽ¯çš„ç›®çš„æ˜¯åªè¦å‘é€ä¸€æ¬¡æŒ‡ä»¤å°±å¯ä»¥ä¸åœæ‰§è¡Œä¸€ä¸ªåŠ¨ä½œ ç›´åˆ°ä¸‹ä¸€æ¡æŒ‡ä»¤
+            ExecuteOrder(USART1_RX_BUF[0]);                 //æ‰§è¡ŒåŠ¨ä½œæŒ‡ä»¤ éœ€è¦æŽ¥æ”¶åˆ°åœæ­¢å‘½ä»¤çš„æ—¶å€™ï¼Œå½“å‰åŠ¨ä½œæ‰å¯ä»¥è¢«æ‰“æ–­
 
-        usart1ReceiveSuccess = 0;//±êÖ¾Î»ÇåÁã
+        usart1ReceiveSuccess = 0; //æ ‡å¿—ä½æ¸…é›¶
         return 1;
     }
     else
         return 0;
 }
-
-
 
 void main()
 {
-		uchar x = 9;
-    IOInit();//³õÊ¼»¯IO¿Ú ±ØÐë
-		
-		BEEP = 1;
-    Uart1Init();//´®¿Ú1³õÊ¼»¯(Ä¬ÈÏ115200) ²¨ÌØÂÊµÄÖµºÍÏµÍ³¾§ÕñÆµÂÊ¿ÉÒÔÔÚconfig.hÖÐÉèÖÃ
-    Uart2Init();//´®¿Ú2³õÊ¼»¯(Ä¬ÈÏ115200) ²¨ÌØÂÊµÄÖµºÍÏµÍ³¾§ÕñÆµÂÊ¿ÉÒÔÔÚconfig.hÖÐÉèÖÃ
-//		while(1){
-//    Uart1SendString("´®¿Ú1³É¹¦·¢ËÍ!\r\n");//´®¿Ú1·¢ËÍÊý¾Ý
-//		Delay200ms();
-//		}
+    uchar x = 9;
+    IOInit(); //åˆå§‹åŒ–IOå£ å¿…é¡»
 
-    Timer0Init_Mode12T();//¶¨Ê±Æ÷0³õÊ¼»¯	¿ØÖÆpwmÉú³ÉÍ¨µÀ0
-    Timer1Init_Mode12T();//¶¨Ê±Æ÷1³õÊ¼»¯	¿ØÖÆpwmÉú³ÉÍ¨µÀ1
-    Timer3Init_Mode12T();//¶¨Ê±Æ÷3³õÊ¼»¯	¿ØÖÆpwmÉú³ÉÍ¨µÀ2
-    Timer4Init_Mode12T();//¶¨Ê±Æ÷4³õÊ¼»¯ ¿ØÖÆ¶æ»ú×ªËÙ
+    BEEP = 1;
+    Uart1Init(); //ä¸²å£1åˆå§‹åŒ–(é»˜è®¤115200) æ³¢ç‰¹çŽ‡çš„å€¼å’Œç³»ç»Ÿæ™¶æŒ¯é¢‘çŽ‡å¯ä»¥åœ¨config.hä¸­è®¾ç½®
+    Uart2Init(); //ä¸²å£2åˆå§‹åŒ–(é»˜è®¤115200) æ³¢ç‰¹çŽ‡çš„å€¼å’Œç³»ç»Ÿæ™¶æŒ¯é¢‘çŽ‡å¯ä»¥åœ¨config.hä¸­è®¾ç½®
+                 //		while(1){
+                 //    Uart1SendString("ä¸²å£1æˆåŠŸå‘é€!\r\n");//ä¸²å£1å‘é€æ•°æ®
+                 //		Delay200ms();
+                 //		}
+
+    Timer0Init_Mode12T(); //å®šæ—¶å™¨0åˆå§‹åŒ–	æŽ§åˆ¶pwmç”Ÿæˆé€šé“0
+    Timer1Init_Mode12T(); //å®šæ—¶å™¨1åˆå§‹åŒ–	æŽ§åˆ¶pwmç”Ÿæˆé€šé“1
+    Timer3Init_Mode12T(); //å®šæ—¶å™¨3åˆå§‹åŒ–	æŽ§åˆ¶pwmç”Ÿæˆé€šé“2
+    Timer4Init_Mode12T(); //å®šæ—¶å™¨4åˆå§‹åŒ– æŽ§åˆ¶èˆµæœºè½¬é€Ÿ
 
     LED = 1;
-	
-		//ÒÔÏÂ´úÂë²âÊÔÓÃ
-		/*
+
+    //ä»¥ä¸‹ä»£ç æµ‹è¯•ç”¨
+    /*
 		while(1)
 		{
-			PwmChange(x,1000);//¸Ä±äR2µÄpwmÎª2000
-			UpDataTimingLeft();//¸üÐÂÊ£ÓàµÍµçÆ½Ê±¼ä
+			PwmChange(x,1000);//æ”¹å˜R2çš„pwmä¸º2000
+			UpDataTimingLeft();//æ›´æ–°å‰©ä½™ä½Žç”µå¹³æ—¶é—´
 			Delay1000ms();
-			PwmChange(x,2000);//¸Ä±äR2µÄpwmÎª2000
-			UpDataTimingLeft();//¸üÐÂÊ£ÓàµÍµçÆ½Ê±¼ä
+			PwmChange(x,2000);//æ”¹å˜R2çš„pwmä¸º2000
+			UpDataTimingLeft();//æ›´æ–°å‰©ä½™ä½Žç”µå¹³æ—¶é—´
 			Delay1000ms();
 		}
 		*/
-    DoAction( forWordArr, 22 );//Ö´ÐÐÇ°½ø¶¯×÷Êý×é  66ÎªforWordArrÊý×éµÄ³¤¶È
-    while( 1 )
+    DoAction(forWordArr, 22); //æ‰§è¡Œå‰è¿›åŠ¨ä½œæ•°ç»„  66ä¸ºforWordArræ•°ç»„çš„é•¿åº¦
+    while (1)
     {
-        CheckAndDealActionDebug( );//¼ì²é²¢´¦Àí¶¯×÷¼°µ÷ÊÔÖ¸Áî
-        CheckAndDealY( );//¼ì²é²¢´¦ÀíÓïÒôÖ¸Áî
+        CheckAndDealActionDebug(); //æ£€æŸ¥å¹¶å¤„ç†åŠ¨ä½œåŠè°ƒè¯•æŒ‡ä»¤
+        CheckAndDealY();           //æ£€æŸ¥å¹¶å¤„ç†è¯­éŸ³æŒ‡ä»¤
     }
 }
-

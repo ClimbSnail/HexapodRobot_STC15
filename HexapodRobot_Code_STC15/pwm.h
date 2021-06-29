@@ -4,14 +4,13 @@
 #include "stc15w.h"
 #include "config.h"
 
+extern void PwmChange(uchar pwmNumber, uint pwmDuty); //pwmNumberèŒƒå›´0~21 pwmDuty(1~2500)
+extern void UpDataTimingLeft(void);                   //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+extern void PwmCH0_Control(void);                     //pwmé€šé“0 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­å‰8ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
+extern void PwmCH1_Control(void);                     //pwmé€šé“1 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬9-16ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
+extern void PwmCH2_Control(void);                     //pwmé€šé“2 åŒæ—¶ç”Ÿæˆ5è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬17-21ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
 
-extern void PwmChange(uchar pwmNumber,uint pwmDuty); //pwmNumber·¶Î§0~21 pwmDuty(1~2500)
-extern void UpDataTimingLeft(void);	//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
-extern void PwmCH0_Control(void);		//pwmÍ¨µÀ0 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞÇ°8¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
-extern void PwmCH1_Control(void);	//pwmÍ¨µÀ1 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ9-16¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
-extern void PwmCH2_Control(void);	//pwmÍ¨µÀ2 Í¬Ê±Éú³É5Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ17-21¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
-
-//Òı½Å¶¨Òå:
+//å¼•è„šå®šä¹‰:
 //P44->H1 P43->H2	P42->H3
 //P20->L1 		P00->R1
 //P21->L2 		P01->R2
@@ -23,18 +22,29 @@ extern void PwmCH2_Control(void);	//pwmÍ¨µÀ2 Í¬Ê±Éú³É5Â·pwmĞÅºÅ timingValueH tim
 //P27->L8 		P07->R8
 //P45->L9 		P46->R9
 
-sbit L1 = P2^0;	sbit R1 = P0^0;
-sbit L2 = P2^1;	sbit R2 = P0^1;
-sbit L3 = P2^2;	sbit R3 = P0^2;
-sbit L4 = P2^3;	sbit R4 = P0^3;
-sbit L5 = P2^4;	sbit R5 = P0^4;
-sbit L6 = P2^5;	sbit R6 = P0^5;
-sbit L7 = P2^6;	sbit R7 = P0^6;
-sbit L8 = P2^7;	sbit R8 = P0^7;
-sbit L9 = P4^5;	sbit R9 = P4^6;
-sbit H1 = P4^4;	sbit H2 = P4^3;	sbit H3 = P4^2;
+sbit L1 = P2 ^ 0;
+sbit R1 = P0 ^ 0;
+sbit L2 = P2 ^ 1;
+sbit R2 = P0 ^ 1;
+sbit L3 = P2 ^ 2;
+sbit R3 = P0 ^ 2;
+sbit L4 = P2 ^ 3;
+sbit R4 = P0 ^ 3;
+sbit L5 = P2 ^ 4;
+sbit R5 = P0 ^ 4;
+sbit L6 = P2 ^ 5;
+sbit R6 = P0 ^ 5;
+sbit L7 = P2 ^ 6;
+sbit R7 = P0 ^ 6;
+sbit L8 = P2 ^ 7;
+sbit R8 = P0 ^ 7;
+sbit L9 = P4 ^ 5;
+sbit R9 = P4 ^ 6;
+sbit H1 = P4 ^ 4;
+sbit H2 = P4 ^ 3;
+sbit H3 = P4 ^ 2;
 
-//µ÷»»¶æ»ú¿ÚË³Ğò
+//è°ƒæ¢èˆµæœºå£é¡ºåº
 extern code uchar changeOrder[21];
 
 #endif

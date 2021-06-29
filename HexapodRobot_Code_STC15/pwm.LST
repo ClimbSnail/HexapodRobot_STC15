@@ -10,27 +10,27 @@ line level    source
    1          #include "pwm.h"
    2          
    3          
-   4          //µ÷»»¶æ»ú¿ÚË³Ğò
+   4          //è°ƒæ¢èˆµæœºå£é¡ºåº
    5          code uchar changeOrder[21] = { 0,1,2,3,4,5,6,7,20, 8,9,10,11,12,13,14,15,19, 18,17,16};
    6          
-   7          //21Â·PWM ¶¨Ê±ÖµµÄ¸ß8Î»ÓëµÍ8Î»
+   7          //21è·¯PWM å®šæ—¶å€¼çš„é«˜8ä½ä¸ä½8ä½
    8          static uchar timingValueH[24]= {0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5, 0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF
              -5,0xF5, 0xF5,0xF5,0xF5,0xF5,0xF5, 0xC6,0xC6,0xA6};
    9          static uchar timingValueL[24]= {0x33,0x33,0x33,0x33,0x33,0x33,0x33,0x33, 0x33,0x33,0x33,0x33,0x33,0x33,0x3
              -3,0x33, 0x33,0x33,0x33,0x33,0x33, 0x66,0x66,0x00};
   10          
-  11          //Èı×é¶¨Ê±Æ÷Ê¹ÓÃµÄpwm¼ÆÊıÖµÏÂ±ê
+  11          //ä¸‰ç»„å®šæ—¶å™¨ä½¿ç”¨çš„pwmè®¡æ•°å€¼ä¸‹æ ‡
   12          static uchar PwmCH0_CountFlag = 0;
   13          static uchar PwmCH1_CountFlag = 0;
   14          static uchar PwmCH2_CountFlag = 0;
   15          
-  16          //µÍµçÆ½µÄÊ£ÓàÊ±¼ä
+  16          //ä½ç”µå¹³çš„å‰©ä½™æ—¶é—´
   17          static uint PwmCH0_TimingLeftValue = 0;
   18          static uint PwmCH1_TimingLeftValue = 0;
   19          static uint PwmCH2_TimingLeftValue = 0;
   20          
   21          
-  22          //Òı½Å¶¨Òå:
+  22          //å¼•è„šå®šä¹‰:
   23          //P44->H1 P43->H2 P42->H3
   24          //P20->L1     P00->R1
   25          //P21->L2     P01->R2
@@ -43,110 +43,110 @@ line level    source
   32          //P45->L9     P46->R9
   33          //P4^4->H1 P4^3->H2  P4^2->H3
   34          
-  35          //pwmÍ¨µÀ0 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞÇ°8¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+  35          //pwmé€šé“0 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­å‰8ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
   36          void PwmCH0_Control(void)
   37          {
-  38   1          if( PwmCH0_CountFlag == 8 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+  38   1          if( PwmCH0_CountFlag == 8 )  //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
   39   1          {
   40   2              P0 = 0x00;
   41   2              CH0_TH = timingValueH[21];
   42   2              CH0_TL = timingValueL[21];
   43   2          }
-  44   1          else   //¶¨Ê±pwmL1~8
+  44   1          else   //å®šæ—¶pwmL1~8
   45   1          {
   46   2              if( PwmCH0_CountFlag == 0 )
   47   2                  P0 = 0x01;
   48   2              else
   49   2                  P0 <<= 1;
-  50   2              CH0_TH = timingValueH[ PwmCH0_CountFlag ]; //¶¨Ê±Ê±¼ä¸³Öµ
+  50   2              CH0_TH = timingValueH[ PwmCH0_CountFlag ]; //å®šæ—¶æ—¶é—´èµ‹å€¼
   51   2              CH0_TL = timingValueL[ PwmCH0_CountFlag ];
   52   2          }
-  53   1          PwmCH0_CountFlag = (PwmCH0_CountFlag+1)%9;  //ÏÂ±êÍÆ½ø
+  53   1          PwmCH0_CountFlag = (PwmCH0_CountFlag+1)%9;  //ä¸‹æ ‡æ¨è¿›
 C51 COMPILER V9.54   PWM                                                                   04/30/2020 01:44:05 PAGE 2   
 
   54   1      }
   55          
-  56          //pwmÍ¨µÀ1 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ9-16¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+  56          //pwmé€šé“1 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬9-16ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
   57          void PwmCH1_Control(void)
   58          {
-  59   1          if( PwmCH1_CountFlag == 8 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+  59   1          if( PwmCH1_CountFlag == 8 )  //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
   60   1          {
   61   2              P2 = 0x00;
   62   2              CH1_TH = timingValueH[22];
   63   2              CH1_TL = timingValueL[22];
   64   2          }
-  65   1          else   //¶¨Ê±pwmR1~8
+  65   1          else   //å®šæ—¶pwmR1~8
   66   1          {
   67   2              if( PwmCH1_CountFlag == 0 )
   68   2                  P2 = 0x01;
   69   2              else
   70   2                  P2 <<= 1;
-  71   2              CH1_TH = timingValueH[ PwmCH1_CountFlag+8 ]; //¶¨Ê±Ê±¼ä¸³Öµ
+  71   2              CH1_TH = timingValueH[ PwmCH1_CountFlag+8 ]; //å®šæ—¶æ—¶é—´èµ‹å€¼
   72   2              CH1_TL = timingValueL[ PwmCH1_CountFlag+8 ];
   73   2          }
-  74   1          PwmCH1_CountFlag = (PwmCH1_CountFlag+1)%9;  //ÏÂ±êÍÆ½ø
+  74   1          PwmCH1_CountFlag = (PwmCH1_CountFlag+1)%9;  //ä¸‹æ ‡æ¨è¿›
   75   1      }
   76          
-  77          //pwmÍ¨µÀ2 Í¬Ê±Éú³É5Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ17-21¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+  77          //pwmé€šé“2 åŒæ—¶ç”Ÿæˆ5è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬17-21ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
   78          void PwmCH2_Control(void)
   79          {
-  80   1          if( PwmCH2_CountFlag == 5 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+  80   1          if( PwmCH2_CountFlag == 5 )  //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
   81   1          {
   82   2              P4 &= 0x83;
   83   2              CH2_TH = timingValueH[23];
   84   2              CH2_TL = timingValueL[23];
   85   2          }
-  86   1          else   //¶¨Ê±pwmH0~4
+  86   1          else   //å®šæ—¶pwmH0~4
   87   1          {
   88   2              if( PwmCH1_CountFlag == 0 )
   89   2                  P4 = P4&0x83|0x04;
   90   2              else
   91   2                  P4 = P4&0x83|(0x04<<PwmCH2_CountFlag);
-  92   2              CH2_TH = timingValueH[ PwmCH2_CountFlag+16 ]; //¶¨Ê±Ê±¼ä¸³Öµ
+  92   2              CH2_TH = timingValueH[ PwmCH2_CountFlag+16 ]; //å®šæ—¶æ—¶é—´èµ‹å€¼
   93   2              CH2_TL = timingValueL[ PwmCH2_CountFlag+16 ];
   94   2          }
-  95   1          PwmCH2_CountFlag = (PwmCH2_CountFlag+1)%6;  //ÏÂ±êÍÆ½ø
+  95   1          PwmCH2_CountFlag = (PwmCH2_CountFlag+1)%6;  //ä¸‹æ ‡æ¨è¿›
   96   1      }
   97          
-  98          //Í¨¹ıÖ¸¶¨¸ßµçÆ½Ê±¼äÀ´¸Ä±ätimingValueH timingValueLÖĞµÄÖµ£¬´ïµ½¸Ä±ä¶ÔÓ¦pwmĞÅºÅµÄ¸ßµçÆ½Ê±¼ä
-  99          void PwmChange(uchar pwmNumber,uint pwmDuty)  //pwmNumber·¶Î§0~20 pwmDuty(1~2500us)
+  98          //é€šè¿‡æŒ‡å®šé«˜ç”µå¹³æ—¶é—´æ¥æ”¹å˜timingValueH timingValueLä¸­çš„å€¼ï¼Œè¾¾åˆ°æ”¹å˜å¯¹åº”pwmä¿¡å·çš„é«˜ç”µå¹³æ—¶é—´
+  99          void PwmChange(uchar pwmNumber,uint pwmDuty)  //pwmNumberèŒƒå›´0~20 pwmDuty(1~2500us)
  100          {
- 101   1          pwmDuty = 65536-(uint)pwmDuty*1.8432;//ÒòÎªÓÃµÄÊÇ22.118400MHz¾§Õñ  ¶¨Ê±Æ÷12·ÖÆµ 1usÓĞ1.8432¸ö½ÚÅÄ
- 102   1      //ÏÈ¸Ä±ä¶¨Ê±Ê±¼äµÄÖµ
- 103   1      //Ê¹ÓÃÎ»²Ù×÷,ÔËËãËÙ¶È¸ü¿ì
- 104   1          pwmNumber = changeOrder[pwmNumber]; //µ÷»»Ë³Ğò
- 105   1          timingValueH[pwmNumber] =  pwmDuty>>8;  //¸³Öµ´ËÂ·pwm
- 106   1          timingValueL[pwmNumber] =  (pwmDuty<<8)>>8; //¸³Öµ´ËÂ·pwm
+ 101   1          pwmDuty = 65536-(uint)pwmDuty*1.8432;//å› ä¸ºç”¨çš„æ˜¯22.118400MHzæ™¶æŒ¯  å®šæ—¶å™¨12åˆ†é¢‘ 1usæœ‰1.8432ä¸ªèŠ‚æ‹
+ 102   1      //å…ˆæ”¹å˜å®šæ—¶æ—¶é—´çš„å€¼
+ 103   1      //ä½¿ç”¨ä½æ“ä½œ,è¿ç®—é€Ÿåº¦æ›´å¿«
+ 104   1          pwmNumber = changeOrder[pwmNumber]; //è°ƒæ¢é¡ºåº
+ 105   1          timingValueH[pwmNumber] =  pwmDuty>>8;  //èµ‹å€¼æ­¤è·¯pwm
+ 106   1          timingValueL[pwmNumber] =  (pwmDuty<<8)>>8; //èµ‹å€¼æ­¤è·¯pwm
  107   1      }
  108          
- 109          //¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
+ 109          //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
  110          void UpDataTimingLeft()
  111          {
  112   1          uchar count;
  113   1          
- 114   1          //¼ÆËãÊ£ÓàµÍµçÆ½µÄÊ£ÓàÊ±¼ä
- 115   1          PwmCH0_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
+ 114   1          //è®¡ç®—å‰©ä½™ä½ç”µå¹³çš„å‰©ä½™æ—¶é—´
+ 115   1          PwmCH0_TimingLeftValue = 28672;//20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
 C51 COMPILER V9.54   PWM                                                                   04/30/2020 01:44:05 PAGE 3   
 
  116   1          for( count = 0 ; count<8 ; count++ )
- 117   1              PwmCH0_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //×¢Òâ'|'·ûºÅ²»Ä
-             -ÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
- 118   1          timingValueH[21] = PwmCH0_TimingLeftValue>>8; //¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
- 119   1          timingValueL[21] = PwmCH0_TimingLeftValue;  //µÈ¼ÛÓÚ timingValueL[21] = (PwmCH0_TimingLeftValue<<8)>>8;
+ 117   1              PwmCH0_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //æ³¨æ„'|'ç¬¦å·ä¸ï¿½
+             -è‹¡çœ‰å“ŸîŒ›ï¿½ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+ 118   1          timingValueH[21] = PwmCH0_TimingLeftValue>>8; //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+ 119   1          timingValueL[21] = PwmCH0_TimingLeftValue;  //ç­‰ä»·äº timingValueL[21] = (PwmCH0_TimingLeftValue<<8)>>8;
  120   1      
- 121   1          PwmCH1_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
+ 121   1          PwmCH1_TimingLeftValue = 28672;//20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
  122   1          for( count = 8 ; count<16 ; count++ )
- 123   1              PwmCH1_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //×¢Òâ'|'·ûºÅ²»Ä
-             -ÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
- 124   1          timingValueH[22] = PwmCH1_TimingLeftValue>>8; //¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
- 125   1          timingValueL[22] = PwmCH1_TimingLeftValue;  //µÈ¼ÛÓÚ timingValueL[22] = (PwmCH1_TimingLeftValue<<8)>>8;
+ 123   1              PwmCH1_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //æ³¨æ„'|'ç¬¦å·ä¸ï¿½
+             -è‹¡çœ‰å“ŸîŒ›ï¿½ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+ 124   1          timingValueH[22] = PwmCH1_TimingLeftValue>>8; //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+ 125   1          timingValueL[22] = PwmCH1_TimingLeftValue;  //ç­‰ä»·äº timingValueL[22] = (PwmCH1_TimingLeftValue<<8)>>8;
  126   1      
- 127   1          PwmCH2_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
+ 127   1          PwmCH2_TimingLeftValue = 28672;//20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
  128   1          for( count = 16 ; count<21 ; count++ )
- 129   1              PwmCH2_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //×¢Òâ'|'·ûºÅ²»Ä
-             -ÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
- 130   1          timingValueH[23] = PwmCH2_TimingLeftValue>>8; //¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
- 131   1          timingValueL[23] = PwmCH2_TimingLeftValue;  //µÈ¼ÛÓÚ timingValueL[23] = (PwmCH2_TimingLeftValue<<8)>>8;
+ 129   1              PwmCH2_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) ); //æ³¨æ„'|'ç¬¦å·ä¸ï¿½
+             -è‹¡çœ‰å“ŸîŒ›ï¿½ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+ 130   1          timingValueH[23] = PwmCH2_TimingLeftValue>>8; //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+ 131   1          timingValueL[23] = PwmCH2_TimingLeftValue;  //ç­‰ä»·äº timingValueL[23] = (PwmCH2_TimingLeftValue<<8)>>8;
  132   1          
  133   1      }
 

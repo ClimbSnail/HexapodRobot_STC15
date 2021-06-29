@@ -2,66 +2,65 @@
 #include "delay.h"
 #include "pwm.h"
 
-//Ä¿±êÒªµ½´ïµÄ¶æÁ¿
-int targetPwm[21] = {1500,1500,1500,1500,1500,1500,1500,1500,1500,   1500,1500,1500,1500,1500,1500,1500,1500,1500,  1500,1500,1500 };
+//ç›®æ ‡è¦åˆ°è¾¾çš„èˆµé‡
+int targetPwm[21] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 
-//¼ÇÂ¼µ±Ç°µÄ¶æÁ¿
-int nowPwm[21] = {1500,1500,1500,1500,1500,1500,1500,1500,1500,   1500,1500,1500,1500,1500,1500,1500,1500,1500,  1500,1500,1500 };
+//è®°å½•å½“å‰çš„èˆµé‡
+int nowPwm[21] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 
-//Ã¿´Î¶¨Ê±ÖĞ¶ÏÊ±ÒªÔö¼ÓµÄ¶æ»úÁ¿
+//æ¯æ¬¡å®šæ—¶ä¸­æ–­æ—¶è¦å¢åŠ çš„èˆµæœºé‡
 int addPwm[21] = {0};
 
-//¶æ»úµÄ°²×°Îó²î
+//èˆµæœºçš„å®‰è£…è¯¯å·®
 /********************************************************************************************
-ÔÚÎªµ÷ÕûÎó²îÖµÇ°(¼´errorValueÖµÈ«Îª0)£¬Í¨¹ı´®¿Ú·¢ËÍDebugÖ¸Áî(ÏÂÃæÓĞ½éÉÜ)À´²é¿´µ±Ç°¶æ»ú°²×°ÓëÀíÏëÖĞ
-Î»×´Ì¬µÄ²î¡£Îó²îÖµµÄ¼ÆËã£º¶ÔÓ¦Î»ÉÏµÄÖµ=1500-Ê¹¶æ»ú´ïµ½ÖĞÎ»µÄÖµ¡£
-×îºó¼ÆËãµÃµ½µÄÖµ°¤¸öÌîÈëerrorValueÊı×éÖĞ¡£
+åœ¨ä¸ºè°ƒæ•´è¯¯å·®å€¼å‰(å³errorValueå€¼å…¨ä¸º0)ï¼Œé€šè¿‡ä¸²å£å‘é€DebugæŒ‡ä»¤(ä¸‹é¢æœ‰ä»‹ç»)æ¥æŸ¥çœ‹å½“å‰èˆµæœºå®‰è£…ä¸ç†æƒ³ä¸­
+ä½çŠ¶æ€çš„å·®ã€‚è¯¯å·®å€¼çš„è®¡ç®—ï¼šå¯¹åº”ä½ä¸Šçš„å€¼=1500-ä½¿èˆµæœºè¾¾åˆ°ä¸­ä½çš„å€¼ã€‚
+æœ€åè®¡ç®—å¾—åˆ°çš„å€¼æŒ¨ä¸ªå¡«å…¥errorValueæ•°ç»„ä¸­ã€‚
 ********************************************************************************************/
 int errorValue[21] = {0};
 
-
-void UpData(void);//pwmÊı¾İ¸üĞÂ
-void CountAddPwm(int tempPwm[21],int frequency);//´«ÈëpwmÒÔ¼°¼õËÙ±¶ÂÊ,¶¨Ê±Æ÷6¿ªÆôÊ±½«×Ô¶¯»ºÂıÉúĞ§
+void UpData(void);                                //pwmæ•°æ®æ›´æ–°
+void CountAddPwm(int tempPwm[21], int frequency); //ä¼ å…¥pwmä»¥åŠå‡é€Ÿå€ç‡,å®šæ—¶å™¨6å¼€å¯æ—¶å°†è‡ªåŠ¨ç¼“æ…¢ç”Ÿæ•ˆ
 
 /************************************************************************
-º¯ÊıÃû³Æ£º	CountAddPwm(uint tempPwm[21],uint frequency)
-¹¦ÄÜÃèÊö£º ¼ÆËãpwmÃ¿´ÎÊı¾İ¸üĞÂµÄÁ¿ frequencyÎª¼õËÙ±¶ÂÊ
-Èë¿Ú²ÎÊı£º tempPwmÎª±¾´ÎÄ¿±êpwmÖµ
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ÒÑ¾­ÔÚ¶¨Ê±Æ÷4ÖĞÊ¹ÓÃ¸üĞÂ
+å‡½æ•°åç§°ï¼š	CountAddPwm(uint tempPwm[21],uint frequency)
+åŠŸèƒ½æè¿°ï¼š è®¡ç®—pwmæ¯æ¬¡æ•°æ®æ›´æ–°çš„é‡ frequencyä¸ºå‡é€Ÿå€ç‡
+å…¥å£å‚æ•°ï¼š tempPwmä¸ºæœ¬æ¬¡ç›®æ ‡pwmå€¼
+è¿” å› å€¼ï¼š none
+å…¶ä»–è¯´æ˜ï¼š å·²ç»åœ¨å®šæ—¶å™¨4ä¸­ä½¿ç”¨æ›´æ–°
 **************************************************************************/
-void CountAddPwm(int tempPwm[21],int frequency)
+void CountAddPwm(int tempPwm[21], int frequency)
 {
     uchar i;
-		uchar changedI;
-    for( i = 0 ; i<21 ; i++ )
+    uchar changedI;
+    for (i = 0; i < 21; i++)
     {
-        if( tempPwm[i]>0 )
+        if (tempPwm[i] > 0)
         {
-						changedI = changeOrder[i];	//µ÷»»Ë³ĞòµÄ×÷ÓÃ
-            targetPwm[changedI] = tempPwm[i]-errorValue[i];
-            addPwm[changedI] = (targetPwm[changedI]-nowPwm[changedI])/frequency;
-//            targetPwm[i] = tempPwm[i];
-//            addPwm[i] = (targetPwm[i]-nowPwm[i])/frequency;
+            changedI = changeOrder[i]; //è°ƒæ¢é¡ºåºçš„ä½œç”¨
+            targetPwm[changedI] = tempPwm[i] - errorValue[i];
+            addPwm[changedI] = (targetPwm[changedI] - nowPwm[changedI]) / frequency;
+            //            targetPwm[i] = tempPwm[i];
+            //            addPwm[i] = (targetPwm[i]-nowPwm[i])/frequency;
         }
     }
 }
 
 /************************************************************************
-º¯ÊıÃû³Æ£º	UpData(void)
-¹¦ÄÜÃèÊö£º pwmÊı¾İ¸üĞÂ
-Èë¿Ú²ÎÊı£º none
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ÒÑ¾­ÔÚ¶¨Ê±Æ÷4ÖĞÊ¹ÓÃ¸üĞÂ
+å‡½æ•°åç§°ï¼š	UpData(void)
+åŠŸèƒ½æè¿°ï¼š pwmæ•°æ®æ›´æ–°
+å…¥å£å‚æ•°ï¼š none
+è¿” å› å€¼ï¼š none
+å…¶ä»–è¯´æ˜ï¼š å·²ç»åœ¨å®šæ—¶å™¨4ä¸­ä½¿ç”¨æ›´æ–°
 **************************************************************************/
 void UpData(void)
 {
     uchar pwmNumber;
-    for( pwmNumber = 0 ; pwmNumber<21 ; pwmNumber++ )
+    for (pwmNumber = 0; pwmNumber < 21; pwmNumber++)
     {
-        if( addPwm[pwmNumber]>0 )
+        if (addPwm[pwmNumber] > 0)
         {
-            if( nowPwm[pwmNumber]<targetPwm[pwmNumber]-addPwm[pwmNumber] )
+            if (nowPwm[pwmNumber] < targetPwm[pwmNumber] - addPwm[pwmNumber])
                 nowPwm[pwmNumber] += addPwm[pwmNumber];
             else
             {
@@ -69,40 +68,39 @@ void UpData(void)
                 addPwm[pwmNumber] = 0;
             }
 
-            PwmChange( pwmNumber, nowPwm[pwmNumber] );
+            PwmChange(pwmNumber, nowPwm[pwmNumber]);
         }
-        if( addPwm[pwmNumber]<0 )
+        if (addPwm[pwmNumber] < 0)
         {
-            if( nowPwm[pwmNumber]>targetPwm[pwmNumber]-addPwm[pwmNumber] )
+            if (nowPwm[pwmNumber] > targetPwm[pwmNumber] - addPwm[pwmNumber])
                 nowPwm[pwmNumber] += addPwm[pwmNumber];
             else
             {
                 nowPwm[pwmNumber] = targetPwm[pwmNumber];
                 addPwm[pwmNumber] = 0;
             }
-            PwmChange( pwmNumber, nowPwm[pwmNumber] );
+            PwmChange(pwmNumber, nowPwm[pwmNumber]);
         }
     }
-//		for( pwmNumber = 0 ; pwmNumber<21 ; pwmNumber++ )
-//            PwmChange( pwmNumber, nowPwm[pwmNumber] );
-    UpDataTimingLeft();	//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
+    //		for( pwmNumber = 0 ; pwmNumber<21 ; pwmNumber++ )
+    //            PwmChange( pwmNumber, nowPwm[pwmNumber] );
+    UpDataTimingLeft(); //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
 }
 
 /************************************************************************
-º¯ÊıÃû³Æ£º	DoAction(const uint *actionArr,uint length)
-¹¦ÄÜÃèÊö£º Ö´ĞĞ¶¯×÷Êı×é
-Èë¿Ú²ÎÊı£º Ö¸ÕëĞÍµÄactionArr length
-·µ »Ø Öµ£º none
-ÆäËûËµÃ÷£º ¸Ãº¯Êı½«´«ÈëµÄ¶¯×÷Êı×éÖ¸ÕëactionArr£¬ÒÔ¼°actionArrµÄ³¤¶Èlength(Ò»¶¨
-						ÒªÊÇ22µÄ±¶Êı Ã¿×éµÚ25Î»ÎªÖ´ĞĞµÄÊ±¼ä¼ä¸ô)ÓĞĞËÈ¤µÄ¿É¸ù¾İĞèÒª×ÔĞĞĞŞ¸Ä¡£
+å‡½æ•°åç§°ï¼š	DoAction(const uint *actionArr,uint length)
+åŠŸèƒ½æè¿°ï¼š æ‰§è¡ŒåŠ¨ä½œæ•°ç»„
+å…¥å£å‚æ•°ï¼š æŒ‡é’ˆå‹çš„actionArr length
+è¿” å› å€¼ï¼š none
+å…¶ä»–è¯´æ˜ï¼š è¯¥å‡½æ•°å°†ä¼ å…¥çš„åŠ¨ä½œæ•°ç»„æŒ‡é’ˆactionArrï¼Œä»¥åŠactionArrçš„é•¿åº¦length(ä¸€å®š
+						è¦æ˜¯22çš„å€æ•° æ¯ç»„ç¬¬25ä½ä¸ºæ‰§è¡Œçš„æ—¶é—´é—´éš”)æœ‰å…´è¶£çš„å¯æ ¹æ®éœ€è¦è‡ªè¡Œä¿®æ”¹ã€‚
 **************************************************************************/
-void DoAction(const int *actionArr,int length) //Ö´ĞĞ¶¯×÷Êı×éº¯Êı
+void DoAction(const int *actionArr, int length) //æ‰§è¡ŒåŠ¨ä½œæ•°ç»„å‡½æ•°
 {
     uint i = 0;
-		 for( i = 0 ; i<length ; i+=22 )	//²»´ø¶¯×÷ÖĞÍ¾ÖĞ¶Ï¹¦ÄÜ
+    for (i = 0; i < length; i += 22) //ä¸å¸¦åŠ¨ä½œä¸­é€”ä¸­æ–­åŠŸèƒ½
     {
-      CountAddPwm(&actionArr[i],actionArr[i+21]/eachFrequencyTime);//50msÎª¶¨Ê±Æ÷¸üĞÂpwmµÄÖÜÆÚ
-			Delay50ms(actionArr[i+21]/eachFrequencyTime);////¶¨Ê±actionArr[i+22]/50¸ö50ms Ê±¼äÑÓ»º ¶æ»ú¼õËÙ¿ØÖÆµÄÒ»²¿·Ö(number×î´óÎª255)
+        CountAddPwm(&actionArr[i], actionArr[i + 21] / eachFrequencyTime); //50msä¸ºå®šæ—¶å™¨æ›´æ–°pwmçš„å‘¨æœŸ
+        Delay50ms(actionArr[i + 21] / eachFrequencyTime);                  ////å®šæ—¶actionArr[i+22]/50ä¸ª50ms æ—¶é—´å»¶ç¼“ èˆµæœºå‡é€Ÿæ§åˆ¶çš„ä¸€éƒ¨åˆ†(numberæœ€å¤§ä¸º255)
     }
 }
-

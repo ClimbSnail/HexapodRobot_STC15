@@ -1,25 +1,23 @@
 #include "pwm.h"
 
+//è°ƒæ¢èˆµæœºå£é¡ºåº
+code uchar changeOrder[21] = {0, 1, 2, 3, 4, 5, 6, 7, 20, 8, 9, 10, 11, 12, 13, 14, 15, 19, 18, 17, 16};
 
-//µ÷»»¶æ»ú¿ÚË³Ğò
-code uchar changeOrder[21] = { 0,1,2,3,4,5,6,7,20, 8,9,10,11,12,13,14,15,19, 18,17,16};
+//21è·¯PWM å®šæ—¶å€¼çš„é«˜8ä½ä¸ä½8ä½
+static uchar timingValueH[24] = {0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xF5, 0xC6, 0xC6, 0xA6};
+static uchar timingValueL[24] = {0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x66, 0x66, 0x00};
 
-//21Â·PWM ¶¨Ê±ÖµµÄ¸ß8Î»ÓëµÍ8Î»
-static uchar timingValueH[24]= {0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5, 0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5,0xF5, 0xF5,0xF5,0xF5,0xF5,0xF5, 0xC6,0xC6,0xA6};
-static uchar timingValueL[24]= {0x33,0x33,0x33,0x33,0x33,0x33,0x33,0x33, 0x33,0x33,0x33,0x33,0x33,0x33,0x33,0x33, 0x33,0x33,0x33,0x33,0x33, 0x66,0x66,0x00};
-
-//Èı×é¶¨Ê±Æ÷Ê¹ÓÃµÄpwm¼ÆÊıÖµÏÂ±ê
+//ä¸‰ç»„å®šæ—¶å™¨ä½¿ç”¨çš„pwmè®¡æ•°å€¼ä¸‹æ ‡
 static uchar PwmCH0_CountFlag = 0;
 static uchar PwmCH1_CountFlag = 0;
 static uchar PwmCH2_CountFlag = 0;
 
-//µÍµçÆ½µÄÊ£ÓàÊ±¼ä
+//ä½ç”µå¹³çš„å‰©ä½™æ—¶é—´
 static uint PwmCH0_TimingLeftValue = 0;
 static uint PwmCH1_TimingLeftValue = 0;
 static uint PwmCH2_TimingLeftValue = 0;
 
-
-//Òı½Å¶¨Òå:
+//å¼•è„šå®šä¹‰:
 //P44->H1 P43->H2	P42->H3
 //P20->L1 		P00->R1
 //P21->L2 		P01->R2
@@ -32,102 +30,101 @@ static uint PwmCH2_TimingLeftValue = 0;
 //P45->L9 		P46->R9
 //P4^4->H1 P4^3->H2  P4^2->H3
 
-//pwmÍ¨µÀ0 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞÇ°8¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+//pwmé€šé“0 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­å‰8ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
 void PwmCH0_Control(void)
 {
-    if( PwmCH0_CountFlag == 8 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+    if (PwmCH0_CountFlag == 8) //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
     {
         P0 = 0x00;
         CH0_TH = timingValueH[21];
         CH0_TL = timingValueL[21];
     }
-    else	 //¶¨Ê±pwmL1~8
+    else //å®šæ—¶pwmL1~8
     {
-        if( PwmCH0_CountFlag == 0 )
+        if (PwmCH0_CountFlag == 0)
             P0 = 0x01;
         else
             P0 <<= 1;
-        CH0_TH = timingValueH[ PwmCH0_CountFlag ]; //¶¨Ê±Ê±¼ä¸³Öµ
-        CH0_TL = timingValueL[ PwmCH0_CountFlag ];
+        CH0_TH = timingValueH[PwmCH0_CountFlag]; //å®šæ—¶æ—¶é—´èµ‹å€¼
+        CH0_TL = timingValueL[PwmCH0_CountFlag];
     }
-    PwmCH0_CountFlag = (PwmCH0_CountFlag+1)%9;	//ÏÂ±êÍÆ½ø
+    PwmCH0_CountFlag = (PwmCH0_CountFlag + 1) % 9; //ä¸‹æ ‡æ¨è¿›
 }
 
-//pwmÍ¨µÀ1 Í¬Ê±Éú³É8Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ9-16¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+//pwmé€šé“1 åŒæ—¶ç”Ÿæˆ8è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬9-16ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
 void PwmCH1_Control(void)
 {
-    if( PwmCH1_CountFlag == 8 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+    if (PwmCH1_CountFlag == 8) //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
     {
         P2 = 0x00;
         CH1_TH = timingValueH[22];
         CH1_TL = timingValueL[22];
     }
-    else	 //¶¨Ê±pwmR1~8
+    else //å®šæ—¶pwmR1~8
     {
-        if( PwmCH1_CountFlag == 0 )
+        if (PwmCH1_CountFlag == 0)
             P2 = 0x01;
         else
             P2 <<= 1;
-        CH1_TH = timingValueH[ PwmCH1_CountFlag+8 ]; //¶¨Ê±Ê±¼ä¸³Öµ
-        CH1_TL = timingValueL[ PwmCH1_CountFlag+8 ];
+        CH1_TH = timingValueH[PwmCH1_CountFlag + 8]; //å®šæ—¶æ—¶é—´èµ‹å€¼
+        CH1_TL = timingValueL[PwmCH1_CountFlag + 8];
     }
-    PwmCH1_CountFlag = (PwmCH1_CountFlag+1)%9;	//ÏÂ±êÍÆ½ø
+    PwmCH1_CountFlag = (PwmCH1_CountFlag + 1) % 9; //ä¸‹æ ‡æ¨è¿›
 }
 
-//pwmÍ¨µÀ2 Í¬Ê±Éú³É5Â·pwmĞÅºÅ timingValueH timingValueLÖĞµÚ17-21¸öÊı¾İ¾ö¶¨¸ßµçÆ½Ê±¼ä
+//pwmé€šé“2 åŒæ—¶ç”Ÿæˆ5è·¯pwmä¿¡å· timingValueH timingValueLä¸­ç¬¬17-21ä¸ªæ•°æ®å†³å®šé«˜ç”µå¹³æ—¶é—´
 void PwmCH2_Control(void)
 {
-    if( PwmCH2_CountFlag == 5 )  //µ½´ïÊ£ÓàµÍµçÆ½Ê±¼ä
+    if (PwmCH2_CountFlag == 5) //åˆ°è¾¾å‰©ä½™ä½ç”µå¹³æ—¶é—´
     {
         P4 &= 0x83;
         CH2_TH = timingValueH[23];
         CH2_TL = timingValueL[23];
     }
-    else	 //¶¨Ê±pwmH0~4
+    else //å®šæ—¶pwmH0~4
     {
-        if( PwmCH1_CountFlag == 0 )
-            P4 = P4&0x83|0x04;
+        if (PwmCH1_CountFlag == 0)
+            P4 = P4 & 0x83 | 0x04;
         else
-            P4 = P4&0x83|(0x04<<PwmCH2_CountFlag);
-        CH2_TH = timingValueH[ PwmCH2_CountFlag+16 ]; //¶¨Ê±Ê±¼ä¸³Öµ
-        CH2_TL = timingValueL[ PwmCH2_CountFlag+16 ];
+            P4 = P4 & 0x83 | (0x04 << PwmCH2_CountFlag);
+        CH2_TH = timingValueH[PwmCH2_CountFlag + 16]; //å®šæ—¶æ—¶é—´èµ‹å€¼
+        CH2_TL = timingValueL[PwmCH2_CountFlag + 16];
     }
-    PwmCH2_CountFlag = (PwmCH2_CountFlag+1)%6;	//ÏÂ±êÍÆ½ø
+    PwmCH2_CountFlag = (PwmCH2_CountFlag + 1) % 6; //ä¸‹æ ‡æ¨è¿›
 }
 
-//Í¨¹ıÖ¸¶¨¸ßµçÆ½Ê±¼äÀ´¸Ä±ätimingValueH timingValueLÖĞµÄÖµ£¬´ïµ½¸Ä±ä¶ÔÓ¦pwmĞÅºÅµÄ¸ßµçÆ½Ê±¼ä
-void PwmChange(uchar pwmNumber,uint pwmDuty)	//pwmNumber·¶Î§0~20 pwmDuty(1~2500us)
+//é€šè¿‡æŒ‡å®šé«˜ç”µå¹³æ—¶é—´æ¥æ”¹å˜timingValueH timingValueLä¸­çš„å€¼ï¼Œè¾¾åˆ°æ”¹å˜å¯¹åº”pwmä¿¡å·çš„é«˜ç”µå¹³æ—¶é—´
+void PwmChange(uchar pwmNumber, uint pwmDuty) //pwmNumberèŒƒå›´0~20 pwmDuty(1~2500us)
 {
-    pwmDuty = 65536-(uint)pwmDuty*1.8432;//ÒòÎªÓÃµÄÊÇ22.118400MHz¾§Õñ  ¶¨Ê±Æ÷12·ÖÆµ 1usÓĞ1.8432¸ö½ÚÅÄ
-//ÏÈ¸Ä±ä¶¨Ê±Ê±¼äµÄÖµ
-//Ê¹ÓÃÎ»²Ù×÷,ÔËËãËÙ¶È¸ü¿ì
-		pwmNumber = changeOrder[pwmNumber];	//µ÷»»Ë³Ğò
-    timingValueH[pwmNumber]	=  pwmDuty>>8;	//¸³Öµ´ËÂ·pwm
-    timingValueL[pwmNumber]	=  (pwmDuty<<8)>>8;	//¸³Öµ´ËÂ·pwm
+    pwmDuty = 65536 - (uint)pwmDuty * 1.8432;      //å› ä¸ºç”¨çš„æ˜¯22.118400MHzæ™¶æŒ¯  å®šæ—¶å™¨12åˆ†é¢‘ 1usæœ‰1.8432ä¸ªèŠ‚æ‹
+                                                   //å…ˆæ”¹å˜å®šæ—¶æ—¶é—´çš„å€¼
+                                                   //ä½¿ç”¨ä½æ“ä½œ,è¿ç®—é€Ÿåº¦æ›´å¿«
+    pwmNumber = changeOrder[pwmNumber];            //è°ƒæ¢é¡ºåº
+    timingValueH[pwmNumber] = pwmDuty >> 8;        //èµ‹å€¼æ­¤è·¯pwm
+    timingValueL[pwmNumber] = (pwmDuty << 8) >> 8; //èµ‹å€¼æ­¤è·¯pwm
 }
 
-//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
+//æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
 void UpDataTimingLeft()
 {
     uchar count;
-		
-    //¼ÆËãÊ£ÓàµÍµçÆ½µÄÊ£ÓàÊ±¼ä
-    PwmCH0_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
-    for( count = 0 ; count<8 ; count++ )
-        PwmCH0_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) );	//×¢Òâ'|'·ûºÅ²»ÄÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
-    timingValueH[21] = PwmCH0_TimingLeftValue>>8;	//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
-    timingValueL[21] = PwmCH0_TimingLeftValue;	//µÈ¼ÛÓÚ timingValueL[21] = (PwmCH0_TimingLeftValue<<8)>>8;
 
-    PwmCH1_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
-    for( count = 8 ; count<16 ; count++ )
-        PwmCH1_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) );	//×¢Òâ'|'·ûºÅ²»ÄÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
-    timingValueH[22] = PwmCH1_TimingLeftValue>>8;	//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
-    timingValueL[22] = PwmCH1_TimingLeftValue;	//µÈ¼ÛÓÚ timingValueL[22] = (PwmCH1_TimingLeftValue<<8)>>8;
+    //è®¡ç®—å‰©ä½™ä½ç”µå¹³çš„å‰©ä½™æ—¶é—´
+    PwmCH0_TimingLeftValue = 28672; //20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
+    for (count = 0; count < 8; count++)
+        PwmCH0_TimingLeftValue += (65536 - (timingValueH[count] << 8 | timingValueL[count])); //æ³¨æ„'|'ç¬¦å·ä¸èƒ½ç”¨åŠ ä»£æ›¿ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+    timingValueH[21] = PwmCH0_TimingLeftValue >> 8;                                           //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+    timingValueL[21] = PwmCH0_TimingLeftValue;                                                //ç­‰ä»·äº timingValueL[21] = (PwmCH0_TimingLeftValue<<8)>>8;
 
-    PwmCH2_TimingLeftValue = 28672;//20ms ĞèÒª´ó¸Å36864¸ö¼ÆÊıÖµ 28672 = 65536-36864
-    for( count = 16 ; count<21 ; count++ )
-        PwmCH2_TimingLeftValue += ( 65536-(timingValueH[count]<<8|timingValueL[count]) );	//×¢Òâ'|'·ûºÅ²»ÄÜÓÃ¼Ó´úÌæ ÏòÏÂ¼æÈİ£¬Êı¾İ»á±ä³É8Î»
-    timingValueH[23] = PwmCH2_TimingLeftValue>>8;	//¸üĞÂÊ£ÓàµÍµçÆ½Ê±¼ä
-    timingValueL[23] = PwmCH2_TimingLeftValue;	//µÈ¼ÛÓÚ timingValueL[23] = (PwmCH2_TimingLeftValue<<8)>>8;
-		
+    PwmCH1_TimingLeftValue = 28672; //20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
+    for (count = 8; count < 16; count++)
+        PwmCH1_TimingLeftValue += (65536 - (timingValueH[count] << 8 | timingValueL[count])); //æ³¨æ„'|'ç¬¦å·ä¸èƒ½ç”¨åŠ ä»£æ›¿ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+    timingValueH[22] = PwmCH1_TimingLeftValue >> 8;                                           //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+    timingValueL[22] = PwmCH1_TimingLeftValue;                                                //ç­‰ä»·äº timingValueL[22] = (PwmCH1_TimingLeftValue<<8)>>8;
+
+    PwmCH2_TimingLeftValue = 28672; //20ms éœ€è¦å¤§æ¦‚36864ä¸ªè®¡æ•°å€¼ 28672 = 65536-36864
+    for (count = 16; count < 21; count++)
+        PwmCH2_TimingLeftValue += (65536 - (timingValueH[count] << 8 | timingValueL[count])); //æ³¨æ„'|'ç¬¦å·ä¸èƒ½ç”¨åŠ ä»£æ›¿ å‘ä¸‹å…¼å®¹ï¼Œæ•°æ®ä¼šå˜æˆ8ä½
+    timingValueH[23] = PwmCH2_TimingLeftValue >> 8;                                           //æ›´æ–°å‰©ä½™ä½ç”µå¹³æ—¶é—´
+    timingValueL[23] = PwmCH2_TimingLeftValue;                                                //ç­‰ä»·äº timingValueL[23] = (PwmCH2_TimingLeftValue<<8)>>8;
 }

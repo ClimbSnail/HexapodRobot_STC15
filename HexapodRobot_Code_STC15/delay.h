@@ -8,6 +8,6 @@ extern void Delay300ms();
 extern void Delay200ms();
 extern void Delay150ms();
 extern void Delay100ms();
-extern void Delay50ms(unsigned char number);	//numberÎª¶¨Ê±50msµÄ¸öÊý number×î´óÎª255
+extern void Delay50ms(unsigned char number); //numberÎªï¿½ï¿½Ê±50msï¿½Ä¸ï¿½ï¿½ï¿½ numberï¿½ï¿½ï¿½Îª255
 
 #endif
